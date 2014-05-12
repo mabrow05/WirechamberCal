@@ -44,23 +44,25 @@ GAIN_FACTOR::~GAIN_FACTOR()
 void GAIN_FACTOR::calc_Q_MPV(GRID& g)
 {
   Char_t temp[200];
-  if (*type=='a')
-    {
-      east = new TH1F("east", "east", 100, 0., 2500.);
-      west = new TH1F("west", "west", 100, 0., 2500.);
-      f1 = new TF1("f1", "landau", 10., 1500.);
-      f2 = new TF1("f2", "landau", 10., 1500.);
-    }
-  else if (*type=='c')
-    {
-      east = new TH1F("east", "east", 100, 0., 80000.);
-      west = new TH1F("west", "west", 100, 0., 80000.);
-      f1 = new TF1("f1", "landau", 30., 40000.);
-      f2 = new TF1("f2", "landau", 30., 40000.);
-    }
+  
 
   for (UInt_t ii=0; ii<runs.size();ii++)
     {
+      if (*type=='a')
+	{
+	  east = new TH1F("east", "east", 100, 0., 2500.);
+	  west = new TH1F("west", "west", 100, 0., 2500.);
+	  f1 = new TF1("f1", "landau", 10., 1500.);
+	  f2 = new TF1("f2", "landau", 10., 1500.);
+	}
+      else if (*type=='c')
+	{
+	  east = new TH1F("east", "east", 100, 0., 80000.);
+	  west = new TH1F("west", "west", 100, 0., 80000.);
+	  f1 = new TF1("f1", "landau", 30., 40000.);
+	  f2 = new TF1("f2", "landau", 30., 40000.);
+	}
+
       sprintf(temp, "/extern/mabrow05/ucna/replay/2011/02252013/hists/spec_%i.root", runs[ii]);
       TFile *f = new TFile(temp, "READ");
       TTree *Tin = (TTree*)(f->Get("phys"));
@@ -115,11 +117,11 @@ void GAIN_FACTOR::calc_Q_MPV(GRID& g)
 	}
       east->Fit("f1", "RM");
       mpvEast[ii] = f1->GetParameter(1);
-      f1->Delete();
+      //f1->Delete();
 
       west->Fit("f2", "RM");
       mpvWest[ii] = f2->GetParameter(1);
-      f2->Delete();
+      //f2->Delete();
       
 
 	  /*Double_t rad = 10.;
@@ -306,7 +308,7 @@ int main(int argc, char *argv[])
 
   GRID grid(atoi(argv[1]));
   GAIN_FACTOR g(argv[2], argv[3], atoi(argv[1]), atoi(argv[4]), atoi(argv[5]));
-  //g.loadData();
+  g.loadEta(grid);
   g.calc_Q_MPV(grid);
   g.simMPV();
   g.calc_gain();
