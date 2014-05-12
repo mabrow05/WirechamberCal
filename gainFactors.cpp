@@ -225,8 +225,8 @@ void GAIN_FACTOR::loadEta(const GRID& g)
   Int_t XeSize = 9;
   Int_t XeMin, XeMax;
 
-  etaEast.resize(0., g.numBins);
-  etaWest.resize(0., g.numBins);
+  etaEast.resize(g.numBins, 0.);
+  etaWest.resize(g.numBins, 0.);
   
   Int_t it = 0;
   while (it<XeSize && runs[0]>XeRunBegin[it]) it+=1;

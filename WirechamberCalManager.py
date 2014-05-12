@@ -150,12 +150,12 @@ class WirechamberCalManager:
 
 if __name__ == "__main__":
 
-    if 1: 
+    if 0: 
         gain = WirechamberCalManager(anORcath = "anode")
         gain.setDirs()
         gain.calcGainFactors()
     
-    if 0: 
+    if 1: 
         gain = WirechamberCalManager(anORcath = "cathode")
         gain.setDirs()
         gain.calcGainFactors()
@@ -178,7 +178,7 @@ if __name__ == "__main__":
                 cal.correctData()
         gainFile.close()
 
-    if 1:
+    if 0:
         #print '1'
         geo = "2011-2012"
         gainFile = open(os.environ["UCNA_CAL_DIR"]+"/gainFactors/gain_anode_%s.txt"%(geo), "r")
