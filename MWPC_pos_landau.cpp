@@ -25,95 +25,6 @@ bool fexists(const Char_t *filename)
   return ifile;
 }
 
-GRID::GRID(Int_t m)
-{
-  nrings = m;
-  GRID::construct();
-}
-
-void GRID::construct()
-{
-  Int_t sectsHold = 0, sects = 0;
-  ringSects.resize(nrings, 0);
-  hists.resize(nrings, vector<Int_t>(1,0));
-  for (int ll = 0; ll<nrings; ll++)
-    {
-      sectsHold = (int)floor(2.*pi*ll)+1;
-      sects += sectsHold;
-      ringSects[ll]=sectsHold;
-      hists[ll].resize(sectsHold, 0);
-    }
-  
-  Double_t r_min = 0.; // Initialize r_min
-  position1.resize(sects, vector<Double_t>(2,0.));
-  position2.resize(sects, vector<Double_t>(2,0.));
-  Int_t kk = 0;
-
-  for (Int_t ii=0; ii<nrings; ii++)
-    {
-      Double_t phi_min = 0.;
-      Double_t deltaPhi = 2.*pi/(double)ringSects[ii];
-      
-      for (Int_t jj=0; jj<ringSects[ii]; jj++)
-	{
-	  //cout << r_min << " " << phi_min << " " << kk << endl;
-	  //pair <double, double> pos (r_min, phi_min); //create pair
-	  //position[pos] = kk; //add position to map with index kk
-	  hists[ii][jj] = kk;
-	  position1[kk][0] = r_min;
-	  position1[kk][1] = phi_min;	  
-	  phi_min+=deltaPhi;
-	  position2[kk][1] = phi_min;
-	  position2[kk][0] = 50.*((double)ii+0.5)/((double)nrings-0.5);
-	  kk++;
-	}
-      r_min = 50.*((double)ii+0.5)/((double)nrings-0.5);
-    }
-
-  numHists = position2.size();
-  cout << "Number of points in second grid: " << numHists << endl;
-  cout << "Grid has been constructed" << endl;
-  cout << kk << " " << hists[0][0] << endl;
-}
-
-int GRID::round_down(Double_t input)
-{      
-  Int_t val = (int)floor(input);
-  return val;
-}
-
-Int_t GRID::find_ring(Double_t r)
-{
-  Int_t index = (int)floor(r/50.*((double)nrings-0.5)+0.5);
-  return index;
-}
-
-Int_t GRID::find_phi(Double_t phi, Double_t ring_hold)
-{
-  
-  Int_t numSects = ringSects[(int)ring_hold];
-  Double_t deltaPhi = 2.*pi/(double)numSects;
-  Int_t phiMinIndex = (int)floor(phi/deltaPhi);
-  //cout << "number of sectors in ring " << ring_hold << ": " << numSects << endl;
-  if (phi>(2*pi-deltaPhi)) return numSects-1;
-  else return phiMinIndex;
-}
-
-int GRID::find_pos(Double_t r, Double_t phi)
-{
-  
-  Int_t ring = find_ring(r);
-  //Double_t r_hold = ((double)ring-.5)/((double)nrings-0.5)*50.;
-  Int_t phiIndex = find_phi(phi, ring);
-  //if (ring_hold==0.) {r_hold=0.; phi_hold=0.;}
-
-  //pair <double, double> pos(r_hold, phi_hold);
-
-  //cout << "Ring " << ring << ", sector " << phiIndex << " at " << r_hold << endl;
-  //cout << hists[ring][phiIndex] << endl;
-  return(hists[ring][phiIndex]);
-}
-
 ANALYZER::ANALYZER(Int_t nrings, Int_t start, Int_t end, Char_t* side, Int_t elow, Int_t ehigh, Char_t* t)
 {
   Char_t temp[500];
@@ -138,7 +49,7 @@ void ANALYZER::Print(const GRID& g, Int_t hisNum, Double_t MPV)
 void ANALYZER::Create_hists(const GRID& g)
 {
   
-  Int_t nHists = g.numHists;
+  Int_t nHists = g.numBins;
   Char_t temp3[10];
   Int_t nbins = 500;
   Float_t low = 0., high = 150000.;
@@ -255,7 +166,7 @@ void ANALYZER::Fit_histos(const GRID& grid)
   //then fit each histogram, and call print for the app
   //appropriate values.
 
-  Int_t numHists = grid.numHists;
+  Int_t numHists = grid.numBins;
   Double_t max_bin = 0.;
   
   if (*type=='c')

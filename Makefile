@@ -18,12 +18,12 @@ LIBS	       += -lSpectrum -lMinuit
 .PHONY: all
 all: MWPC_pos_landau.exe correctData.exe posMap.exe simData.exe gainFactors.exe
 
-MWPC_pos_landau.exe: MWPC_pos_landau.o
-	$(CXX) $(CXXFLAGS) -o MWPC_pos_landau.exe MWPC_pos_landau.o $(LIBS) 
+MWPC_pos_landau.exe: MWPC_pos_landau.o GRID.o 
+	$(CXX) $(CXXFLAGS) -o MWPC_pos_landau.exe MWPC_pos_landau.o GRID.o $(LIBS) 
 	@echo "Done"
 
-correctData.exe: correctData.o
-	$(CXX) $(CXXFLAGS) -o correctData.exe correctData.o $(LIBS) 
+correctData.exe: correctData.o GRID.o
+	$(CXX) $(CXXFLAGS) -o correctData.exe correctData.o GRID.o $(LIBS) 
 	@echo "Done"
 
 posMap.exe: posMap.o
@@ -34,9 +34,12 @@ simData.exe: simData.o
 	$(CXX) $(CXXFLAGS) -o simData.exe simData.o $(LIBS) 
 	@echo "Done"
 
-gainFactors.exe: gainFactors.o
-	$(CXX) $(CXXFLAGS) -o gainFactors.exe gainFactors.o $(LIBS) 
+gainFactors.exe: gainFactors.o GRID.o
+	$(CXX) $(CXXFLAGS) -o gainFactors.exe gainFactors.o GRID.o $(LIBS) 
 	@echo "Done"
+
+GRID : GRID.cc 
+	$(CXX) $(CXXFLAGS) $(LIBS) -c 
 
 clean:
 		@rm -f *.o *~  core

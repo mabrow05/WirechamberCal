@@ -123,7 +123,7 @@ class WirechamberCalManager:
                     print "File %s doesn't exist..."%(runs[i])
             runFile.close()
             #if int(runs[0])>18432 and int(runs[0])<18682:
-            os.system("./gainFactors.exe %i %s %s"%(self.nrings, self.anORcath,'runHold.txt'))
+            os.system("./gainFactors.exe %i %s %s %i %i"%(self.nrings, self.anORcath,'runHold.txt', self.Emin, self.Emax))
             
         octetFile.close()
 
