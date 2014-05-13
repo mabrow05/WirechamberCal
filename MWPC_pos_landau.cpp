@@ -183,10 +183,9 @@ void ANALYZER::Fit_histos(const GRID& grid)
 		  //f1->SetParLimits(1, 0.0, 18000.);
 		  f1->SetParLimits(0, 0.0, 2.5E5);
 		  //f1->SetParLimits(1, 0.0, 40000.);
-		  f1->SetParameter(1,max_bin);
-		  f1->SetParameter(2,2000.);
+		  f1->SetParameters(1.e4,max_bin,2000.);
 		  
-		  hisList[ll]->Fit("f1", "RMBQ"); 
+		  hisList[ll]->Fit("f1", "RMBQI"); 
 	      
 		  Double_t mpv = f1->GetParameter(1);
 	  
@@ -202,10 +201,9 @@ void ANALYZER::Fit_histos(const GRID& grid)
 		  //cout << grid.position2[ll][0] << " " << grid.position2[ll][1] << " had low bin max!" << endl;
 		  TF1 *f2 = new TF1("f2", "landau", 500., 40000.);
 
-		  f2->SetParameter(1, 10000.);
-		  f2->SetParameter(2, 2000.);
+		  f2->SetParameters(1.e4, 10000., 2000.);
 	      
-		  hisList[ll]->Fit("f2","RMBQ");
+		  hisList[ll]->Fit("f2","RMBQI");
 	      
 		  Double_t mpv = f2->GetParameter(1);
 
@@ -228,10 +226,9 @@ void ANALYZER::Fit_histos(const GRID& grid)
 		  TF1 *f1 = new TF1("f1", "landau", 10., 1500.);		  
 		  f1->SetParLimits(0, 0.0, 2.5E5);
 		  //f1->SetParLimits(1, 0.0, 40000.);
-		  f1->SetParameter(1,max_bin);
-		  f1->SetParameter(2,40.);
+		  f1->SetParameters(1.e4,max_bin, 40.);
 		  
-		  hisList[ll]->Fit("f1", "RMBQ"); 
+		  hisList[ll]->Fit("f1", "RMBQI"); 
 	      
 		  Double_t mpv = f1->GetParameter(1);
 	  
@@ -247,10 +244,9 @@ void ANALYZER::Fit_histos(const GRID& grid)
 		  //cout << grid.position2[ll][0] << " " << grid.position2[ll][1] << " had low bin max!" << endl;
 		  TF1 *f2 = new TF1("f2", "landau", 10., 1500.);
 
-		  f2->SetParameter(1, 200.);
-		  f2->SetParameter(2, 40.);
+		  f2->SetParameters(1.e4, 200., 40.);
 	      
-		  hisList[ll]->Fit("f2","RMBQ");
+		  hisList[ll]->Fit("f2","RMBQI");
 	      
 		  Double_t mpv = f2->GetParameter(1);
 

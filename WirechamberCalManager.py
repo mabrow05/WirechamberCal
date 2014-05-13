@@ -151,6 +151,40 @@ class WirechamberCalManager:
 
 if __name__ == "__main__":
 
+    if 1:
+        #print '1'
+        geo = "2011-2012"
+        gainFile = open(os.environ["UCNA_CAL_DIR"]+"/gainFactors/gain_cathode_%s.txt"%(geo), "r")
+        for line in gainFile:
+            nums=line.split()
+            print nums[0]
+            if int(nums[0])<19966:
+                cal = WirechamberCalManager(runNumber=int(nums[0]), anORcath = "cathode")
+                cal.setDirs()
+                cal.runSimData()
+                cal.findXeRun()
+                cal.runXeData()
+                cal.runPosMap()
+                #cal.correctData()
+        gainFile.close()
+
+    if 1:
+        #print '1'
+        geo = "2011-2012"
+        gainFile = open(os.environ["UCNA_CAL_DIR"]+"/gainFactors/gain_anode_%s.txt"%(geo), "r")
+        for line in gainFile:
+            nums=line.split()
+            print nums[0]
+            if int(nums[0])<19966:
+                cal = WirechamberCalManager(runNumber=int(nums[0]), anORcath = "anode")
+                cal.setDirs()
+                cal.runSimData()
+                cal.findXeRun()
+                cal.runXeData()
+                cal.runPosMap()
+                #cal.correctData()
+        gainFile.close()
+
     if 1: 
         gain = WirechamberCalManager(anORcath = "anode")
         gain.setDirs()

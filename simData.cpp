@@ -61,8 +61,8 @@ int main(int argc, char *argv[])
     }
 
 
-  TH1F *east = new TH1F("east", "East Side", 100, 0., 50.);
-  TH1F *west = new TH1F("west", "West Side", 100, 0., 50.); 
+  TH1F *east = new TH1F("east", "East Side", 200, 0., 50.);
+  TH1F *west = new TH1F("west", "West Side", 200, 0., 50.); 
 
   for (int i = 0; i<nbins; i++)
     {
@@ -80,28 +80,30 @@ int main(int argc, char *argv[])
       chain->Draw(temp1, temp);
 
 	 
-      TF1 *f1 = new TF1("f1", "landau", 0.5, 20.);
+      TF1 *f1 = new TF1("f1", "landau", 0.05, 20.);
       f1->SetParLimits(0, 0., 1.e10);
-      f1->SetParLimits(1, 0., 1.e5);
+      //f1->SetParLimits(1, 0., 1.e7);
+      
       Double_t max_bin = east->GetBinCenter(east->GetMaximumBin());
-      f1->SetParameter(1,max_bin);
+      f1->SetParameters(5.e4,max_bin, 0.1);
       cout << endl << endl << "For Energy Range: " << Emin << " to " << Emax << endl;
       
       //sprintf(num, "his%i", i)     
-      east->Fit("f1","RMB");
+      east->Fit("f1","RMBI");
       outfile0 << Emin << " " << Emax << " " << f1->GetParameter(1) << endl;
       delete f1;
       f1=NULL;
 
-      TF1 *f2 = new TF1("f2", "landau", 0.5, 20.);
+      TF1 *f2 = new TF1("f2", "landau", 0.05, 20.);
       f2->SetParLimits(0, 0., 1.e10);
-      f2->SetParLimits(1, 0., 1.e5);
+      //f2->SetParLimits(1, 0., 1.e7);
+
       max_bin = west->GetBinCenter(west->GetMaximumBin());
-      f2->SetParameter(1,max_bin);
+      f2->SetParameters(5.e4,max_bin,0.1);
       cout << endl << endl << "For Energy Range: " << Emin << " to " << Emax << endl;
       
       //sprintf(num, "his%i", i)     
-      west->Fit("f2","RMB");
+      west->Fit("f2","RMBI");
       outfile1 << Emin << " " << Emax << " " << f2->GetParameter(1) << endl;
       
 
