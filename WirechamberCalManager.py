@@ -64,8 +64,9 @@ class WirechamberCalManager:
     def findXeRun(self):#done
         #make a table of all the Xe runs, check where runNumber falls
         #in comparison, and choose the appropriate Xe run range   
-	XeRunBegin = [16983, 17561, 18081, 18390, 18712, 19873, 21596, 21966, 22961]    
-        self.XeRuns = {16983:17078, 17561:17734, 18081:18090, 18390:18413, 
+        # note: changed 17562 -> 17684
+	XeRunBegin = [16983, 17684, 18081, 18390, 18712, 19873, 21596, 21966, 22961]    
+        self.XeRuns = {16983:17078, 17684:17734, 18081:18090, 18390:18413, 
                        18712:18744, 19873:19898, 21596:21605, 21966:22003, 22961:22979}
 
         self.XeRunLow = 18390 #default values chosen but just as a holder
@@ -150,7 +151,7 @@ class WirechamberCalManager:
 
 if __name__ == "__main__":
 
-    if 0: 
+    if 1: 
         gain = WirechamberCalManager(anORcath = "anode")
         gain.setDirs()
         gain.calcGainFactors()
@@ -161,7 +162,7 @@ if __name__ == "__main__":
         gain.calcGainFactors()
 
 	#for run in range(18432,18639,1):
-    if 0:
+    if 1:
         #print '1'
         geo = "2011-2012"
         gainFile = open(os.environ["UCNA_CAL_DIR"]+"/gainFactors/gain_cathode_%s.txt"%(geo), "r")
@@ -178,7 +179,7 @@ if __name__ == "__main__":
                 cal.correctData()
         gainFile.close()
 
-    if 0:
+    if 1:
         #print '1'
         geo = "2011-2012"
         gainFile = open(os.environ["UCNA_CAL_DIR"]+"/gainFactors/gain_anode_%s.txt"%(geo), "r")

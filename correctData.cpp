@@ -111,8 +111,8 @@ void ANALYZER::etaFill(const GRID& g) //done
 
 void ANALYZER::Create_hists(const GRID& g) //done
 {
-  finalHistoE = new TH1F("MWPCE", "East Corrected Histogram", 500, 0., 50.);
-  finalHistoW = new TH1F("MWPCW", "West Corrected Histogram", 500, 0., 50.);
+  finalHistoE = new TH1F("MWPCE", "East Corrected Histogram", 100, 0., 50.);
+  finalHistoW = new TH1F("MWPCW", "West Corrected Histogram", 100, 0., 50.);
 
   cout << "Made the histograms.\n\n\n"; 
 }
@@ -291,7 +291,7 @@ void ANALYZER::Fit_histo(const GRID& grid) //done
   f1->SetParameter(1,max_bin);
   f1->SetParameter(2,10.);
 	  
-  finalHistoE->Fit("f1", "RM"); 
+  finalHistoE->Fit("f1", "RMB"); 
 	      
   Double_t mpv = f1->GetParameter(1);
 
@@ -310,7 +310,7 @@ void ANALYZER::Fit_histo(const GRID& grid) //done
   f2->SetParameter(1,max_bin);
   f2->SetParameter(2,10.);
 	  
-  finalHistoW->Fit("f2", "RM"); 
+  finalHistoW->Fit("f2", "RMB"); 
 	      
   mpv = f2->GetParameter(1);
 

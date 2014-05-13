@@ -1,6 +1,6 @@
 {
   ifstream infileEast, infileWest;
-  Char_t *t="anode";
+  Char_t *t="cathode";
   //*t="anode";
   //*t="cathode";
 

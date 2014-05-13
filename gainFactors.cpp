@@ -115,93 +115,22 @@ void GAIN_FACTOR::calc_Q_MPV(GRID& g)
 		}
 	    }
 	}
-      east->Fit("f1", "RM");
+      f1->SetParLimits(0, 0., 1.e10);
+      f1->SetParLimits(1, 0., 1.e5);
+      Double_t max_bin = east->GetBinCenter(east->GetMaximumBin());
+      f1->SetParameter(1,max_bin);
+      east->Fit("f1", "RMB");
       mpvEast[ii] = f1->GetParameter(1);
       //f1->Delete();
 
-      west->Fit("f2", "RM");
+      f2->SetParLimits(0, 0., 1.e10);
+      f2->SetParLimits(1, 0., 1.e5);
+      max_bin = west->GetBinCenter(west->GetMaximumBin());
+      f2->SetParameter(1,max_bin);
+      west->Fit("f2", "RMB");
       mpvWest[ii] = f2->GetParameter(1);
       //f2->Delete();
       
-
-	  /*Double_t rad = 10.;
-	  while (mpvE<0. || mpvE>5000.)
-	    {
-	      sprintf(temp,"(xEmpm.center*xEmpm.center+yEmpm.center*yEmpm.center)<%.2f*%.2f", rad, rad);
-	      TCut cut1 = temp;
-	      Tin->Draw("AnodeE>>east", "Type==0 && Side==0 && PID==1 && EvisE>400. && EvisE<600."&&cut1);
-	      TF1 *f1 = new TF1("f1", "landau", 10., 1500.);
-	      east->Fit("f1", "RM");
-	      mpvE = f1->GetParameter(1);
-	      rad+=1;
-	      f1->Delete();
-	      if (rad>20.) break;
-	    }
-	  mpvEast[ii] = mpvE;
-
-	  rad=10.;
-	  while (mpvW<100. || mpvW>1000.)
-	    {
-	      sprintf(temp,"(xWmpm.center*xWmpm.center+yWmpm.center*yWmpm.center)<%.2f*%.2f", rad, rad);
-	      TCut cut1 = temp;
-	      Tin->Draw("AnodeW>>west", "Type==0 && Side==1 && PID==1 && EvisW>400. && EvisW<600."&&cut1);
-	      TF1 *f2 = new TF1("f2", "landau", 10., 1500.);
-	      west->Fit("f2", "RM");
-	      mpvW = f2->GetParameter(1);
-	      rad+=1;
-	      f2->Delete();
-	      if (rad>20.) break;
-	    }
-	  mpvWest[ii] = mpvW;
-	}
-	
-	  if (mpvW<100. || mpvW>1000.)
-	    {
-	      Tin->Draw("AnodeW>>west", "Type==0 && Side==1 && PID==1 && EvisW>400. && EvisW<600. && (xWmpm.center*xWmpm.center+yWmpm.center*yWmpm.center)<15.*15.");
-	      west->Fit("f2","RM");
-	      mpvWest[ii] = f2->GetParameter(1);
-	    }
-	  else {mpvWest[ii] = mpvW;}
-
-	  cout << f1->GetParameter(1) << " " << f2->GetParameter(1) << endl;
-	  }
-      else if (*type=='c')
-	{
-	  
-	  Double_t mpvE = 0., mpvW = 0.;
-
-	  Double_t rad = 10.;
-	  while (mpvE<3000. || mpvE>14000.)
-	    {
-	      sprintf(temp,"(xEmpm.center*xEmpm.center+yEmpm.center*yEmpm.center)<%.2f*%.2f", rad, rad);
-	      TCut cut1 = temp;
-	      Tin->Draw("(xEmpm.height*xEmpm.width+yEmpm.height*yEmpm.width)>>east", "Type==0 && Side==0 && PID==1 && EvisE>400. && EvisE<600."&&cut1);
-	      TF1 *f1 = new TF1("f1", "landau", 30., 40000.);
-	      east->Fit("f1", "RM");
-	      mpvE = f1->GetParameter(1);
-	      rad+=1;
-	      f1->Delete();
-	      if (rad>20.) break;
-	    }
-	  mpvEast[ii] = mpvE;
-	     
-
-	  rad=10.;
-	  while (mpvW<4500. || mpvW>12000.)
-	    {
-	      sprintf(temp,"(xWmpm.center*xWmpm.center+yWmpm.center*yWmpm.center)<%.2f*%.2f", rad, rad);
-	      TCut cut1 = temp;
-	      Tin->Draw("(xWmpm.height*xWmpm.width+yWmpm.height*yWmpm.width)>>west", "Type==0 && Side==1 && PID==1 && EvisW>400. && EvisW<600."&&cut1);
-	      TF1 *f2 = new TF1("f2", "landau", 30., 40000.);
-	      west->Fit("f2", "RM");
-	      mpvW = f2->GetParameter(1);
-	      rad+=1;
-	      f2->Delete();
-	      if (rad>20.) break;
-	    }
-	  mpvWest[ii] = mpvW;
-
-	  }*/
     }
 }
 

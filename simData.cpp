@@ -70,34 +70,38 @@ int main(int argc, char *argv[])
       west->Reset();
 	  
 
-      sprintf(temp, "MWPCEnergy.MWPCEnergyE>1e-5 && MWPCEnergy.MWPCEnergyE<20. && MWPCEnergy.MWPCEnergyW <0.01 && Edep.EdepW<0.1 && Edep.EdepE>%f && Edep.EdepE<%f",(double)Emin,(double)Emax);
+      sprintf(temp, "MWPCEnergy.MWPCEnergyE>1e-5 && MWPCEnergy.MWPCEnergyE<50. && MWPCEnergy.MWPCEnergyW<0.01 && Edep.EdepW<0.1 && Edep.EdepE>%f && Edep.EdepE<%f",(double)Emin,(double)Emax);
       sprintf(temp1, "MWPCEnergy.MWPCEnergyE>>east");
       chain->Draw(temp1, temp);
 	  
 
-      sprintf(temp, "MWPCEnergy.MWPCEnergyW>1e-5 && MWPCEnergy.MWPCEnergyW<20. && MWPCEnergy.MWPCEnergyE <0.01 && Edep.EdepE<0.1 && Edep.EdepW>%f && Edep.EdepW<%f",(double)Emin,(double)Emax);
+      sprintf(temp, "MWPCEnergy.MWPCEnergyW>1e-5 && MWPCEnergy.MWPCEnergyW<50. && MWPCEnergy.MWPCEnergyE<0.01 && Edep.EdepE<0.1 && Edep.EdepW>%f && Edep.EdepW<%f",(double)Emin,(double)Emax);
       sprintf(temp1, "MWPCEnergy.MWPCEnergyW>>west");
       chain->Draw(temp1, temp);
 
 	 
-      TF1 *f1 = new TF1("f1", "landau", 0., 20.);
+      TF1 *f1 = new TF1("f1", "landau", 0.5, 20.);
       f1->SetParLimits(0, 0., 1.e10);
       f1->SetParLimits(1, 0., 1.e5);
+      Double_t max_bin = east->GetBinCenter(east->GetMaximumBin());
+      f1->SetParameter(1,max_bin);
       cout << endl << endl << "For Energy Range: " << Emin << " to " << Emax << endl;
       
       //sprintf(num, "his%i", i)     
-      east->Fit("f1","R");
+      east->Fit("f1","RMB");
       outfile0 << Emin << " " << Emax << " " << f1->GetParameter(1) << endl;
       delete f1;
       f1=NULL;
 
-      TF1 *f2 = new TF1("f2", "landau", 0., 20.);
+      TF1 *f2 = new TF1("f2", "landau", 0.5, 20.);
       f2->SetParLimits(0, 0., 1.e10);
       f2->SetParLimits(1, 0., 1.e5);
+      max_bin = west->GetBinCenter(west->GetMaximumBin());
+      f2->SetParameter(1,max_bin);
       cout << endl << endl << "For Energy Range: " << Emin << " to " << Emax << endl;
       
       //sprintf(num, "his%i", i)     
-      west->Fit("f2","R");
+      west->Fit("f2","RMB");
       outfile1 << Emin << " " << Emax << " " << f2->GetParameter(1) << endl;
       
 
