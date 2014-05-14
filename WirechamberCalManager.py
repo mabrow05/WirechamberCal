@@ -2,6 +2,9 @@
 import os
 from math import *
 
+def fileExistsAndNotEmpty(fpath):
+    return True if os.path.isfile(fpath) and os.path.getsize(fpath) > 0 else False
+
 
 class WirechamberCalManager:
 
@@ -49,13 +52,13 @@ class WirechamberCalManager:
         else:
             self.geometry = "2011-2012"
 
-        if not os.path.isfile(self.SimDir+"/"+"Beta_%i-%ikev_east.dat"%(self.Emin, self.Emax)):
+        if not fileExistsAndNotEmpty(self.SimDir+"/"+"Beta_%i-%ikev_east.dat"%(self.Emin, self.Emax)):
             	os.system("./simData.exe %i %i %i %s" %(10,self.Emin, self.Emax, self.geometry))
 		print "Finished Simulated data....\n"	
 	else:
 		print "Simulated data already existed for this Energy Bin!\n"
 
-        if not os.path.isfile(self.SimDir+"/Beta_%i-%ikev_east.dat"%(self.Emin, self.Emax)):
+        if not fileExistsAndNotEmpty(self.SimDir+"/Beta_%i-%ikev_east.dat"%(self.Emin, self.Emax)):
             print "PROBLEM WITH OBTAINING SIMULATED DATA"
             exit(0)
 	
@@ -88,7 +91,7 @@ class WirechamberCalManager:
         #energy bin
         
         for side in self.Side:
-            if not os.path.isfile(self.XeDir+"/%i-%i_%s_%irings%i-%ikeV_%s.dat"%(self.XeRunLow,self.XeRunHigh,
+            if not fileExistsAndNotEmpty(self.XeDir+"/%i-%i_%s_%irings%i-%ikeV_%s.dat"%(self.XeRunLow,self.XeRunHigh,
                                                                              self.anORcath,self.nrings,self.Emin,self.Emax,side)):
                 
                 os.system("./MWPC_pos_landau.exe %i %i %i %s %i %i %s"%(self.XeRunLow,self.XeRunHigh,
@@ -98,7 +101,7 @@ class WirechamberCalManager:
     def runPosMap(self): #done
 	print "Running Position Map.....\n"
 	
-        if not os.path.isfile(self.posMapDir+"/%irings_%i-%ikeV_posMap_%i-%i_%s_%s.dat"%(self.nrings,self.Emin,self.Emax,self.XeRunLow,
+        if not fileExistsAndNotEmpty(self.posMapDir+"/%irings_%i-%ikeV_posMap_%i-%i_%s_%s.dat"%(self.nrings,self.Emin,self.Emax,self.XeRunLow,
                                                                                       self.XeRunHigh,self.anORcath,"east")):
             
             os.system("./posMap.exe %i %i %i %i %i %s"%(self.XeRunLow,self.XeRunHigh,
@@ -135,7 +138,7 @@ class WirechamberCalManager:
 	logFile = self.LogDir+"/%s_%s_Ebin%i-%i_log.txt"%(self.runNumber, self.anORcath, self.Emin, self.Emax)
 
 	if os.path.isfile(self.DataDir+"/spec_%i.root"%(self.runNumber)):
-        	#if not os.path.isfile(self.CorrDataDir+"/RunNum_%i_%irings_%i-%i_%s.root"%(self.runNumber, self.nrings, self.Emin, self.Emax, self.anORcath)):
+        	#if not fileExistsAndNotEmpty(self.CorrDataDir+"/RunNum_%i_%irings_%i-%i_%s.root"%(self.runNumber, self.nrings, self.Emin, self.Emax, self.anORcath)):
 			#os.system("./correctData.exe %i %i %i %i %i %s %i > %s "%(self.XeRunLow,self.XeRunHigh,self.nrings,
 			#					 	self.Emin, self.Emax, self.anORcath,self.runNumber,logFile))
                         os.system("./correctData.exe %i %i %i %i %i %s %i "%(self.XeRunLow,self.XeRunHigh,self.nrings,
@@ -151,86 +154,25 @@ class WirechamberCalManager:
 
 if __name__ == "__main__":
 
-    if 1:
+    if 0:
         #print '1'
         geo = "2011-2012"
-        gainFile = open(os.environ["UCNA_CAL_DIR"]+"/gainFactors/gain_cathode_%s.txt"%(geo), "r")
-        for line in gainFile:
-            nums=line.split()
-            print nums[0]
-            if int(nums[0])<19966:
-                cal = WirechamberCalManager(runNumber=int(nums[0]), anORcath = "cathode")
-                cal.setDirs()
-                cal.runSimData()
-                cal.findXeRun()
-                cal.runXeData()
-                cal.runPosMap()
-                #cal.correctData()
-        gainFile.close()
+        runs = [17080, 17735, 18091, 18745, 19899]
+        for run in runs:
+            cal = WirechamberCalManager(runNumber=run, anORcath = "cathode")
+            cal.setDirs()
+            cal.runSimData()
+            cal.findXeRun()
+            cal.runXeData()
+            cal.runPosMap()
 
-    if 1:
-        #print '1'
-        geo = "2011-2012"
-        gainFile = open(os.environ["UCNA_CAL_DIR"]+"/gainFactors/gain_anode_%s.txt"%(geo), "r")
-        for line in gainFile:
-            nums=line.split()
-            print nums[0]
-            if int(nums[0])<19966:
-                cal = WirechamberCalManager(runNumber=int(nums[0]), anORcath = "anode")
-                cal.setDirs()
-                cal.runSimData()
-                cal.findXeRun()
-                cal.runXeData()
-                cal.runPosMap()
-                #cal.correctData()
-        gainFile.close()
-
-    if 1: 
-        gain = WirechamberCalManager(anORcath = "anode")
-        gain.setDirs()
-        gain.calcGainFactors()
-    
-    if 1: 
         gain = WirechamberCalManager(anORcath = "cathode")
         gain.setDirs()
         gain.calcGainFactors()
 
-	#for run in range(18432,18639,1):
     if 1:
         #print '1'
         geo = "2011-2012"
-        gainFile = open(os.environ["UCNA_CAL_DIR"]+"/gainFactors/gain_cathode_%s.txt"%(geo), "r")
-        for line in gainFile:
-            nums=line.split()
-            print nums[0]
-            if int(nums[0])<19966:
-                cal = WirechamberCalManager(runNumber=int(nums[0]), anORcath = "cathode")
-                cal.setDirs()
-                cal.runSimData()
-                cal.findXeRun()
-                cal.runXeData()
-                cal.runPosMap()
-                cal.correctData()
-        gainFile.close()
-
-    if 1:
-        #print '1'
-        geo = "2011-2012"
-        gainFile = open(os.environ["UCNA_CAL_DIR"]+"/gainFactors/gain_anode_%s.txt"%(geo), "r")
-        for line in gainFile:
-            nums=line.split()
-            print nums[0]
-            if int(nums[0])<19966:
-                cal = WirechamberCalManager(runNumber=int(nums[0]), anORcath = "anode")
-                cal.setDirs()
-                cal.runSimData()
-                cal.findXeRun()
-                cal.runXeData()
-                cal.runPosMap()
-                cal.correctData()
-        gainFile.close()
-
-    if 0:
         runs = [17080, 17735, 18091, 18745, 19899]
         for run in runs:
             cal = WirechamberCalManager(runNumber=run, anORcath = "anode")
@@ -239,7 +181,48 @@ if __name__ == "__main__":
             cal.findXeRun()
             cal.runXeData()
             cal.runPosMap()
-        #cal.correctData()
+
+        gain = WirechamberCalManager(anORcath = "anode")
+        gain.setDirs()
+        gain.calcGainFactors()
+
+
+    #To calibrate data using anode
+    if 0:
+        #print '1'
+        geo = "2011-2012"
+        gainFile = open(os.environ["UCNA_CAL_DIR"]+"/gainFactors/gain_cathode_%s.txt"%(geo), "r")
+        for line in gainFile:
+            nums=line.split()
+            print nums[0]
+            if int(nums[0])<19966:
+                cal = WirechamberCalManager(runNumber=int(nums[0]), anORcath = "cathode")
+                cal.setDirs()
+                cal.runSimData()
+                cal.findXeRun()
+                cal.runXeData()
+                cal.runPosMap()
+                cal.correctData()
+        gainFile.close()
+
+    #to calibrate data using cathode
+    if 0:
+        #print '1'
+        geo = "2011-2012"
+        gainFile = open(os.environ["UCNA_CAL_DIR"]+"/gainFactors/gain_anode_%s.txt"%(geo), "r")
+        for line in gainFile:
+            nums=line.split()
+            print nums[0]
+            if int(nums[0])<19966:
+                cal = WirechamberCalManager(runNumber=int(nums[0]), anORcath = "anode")
+                cal.setDirs()
+                cal.runSimData()
+                cal.findXeRun()
+                cal.runXeData()
+                cal.runPosMap()
+                cal.correctData()
+        gainFile.close()
+
 
     
         

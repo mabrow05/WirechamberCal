@@ -53,14 +53,32 @@ void GAIN_FACTOR::calc_Q_MPV(GRID& g)
 	  east = new TH1F("east", "east", 100, 0., 2500.);
 	  west = new TH1F("west", "west", 100, 0., 2500.);
 	  f1 = new TF1("f1", "landau", 10., 1500.);
+	  f1->SetParLimits(0, 0., 1.e6);
+	  f1->SetParameter(0, 3.e3);
+	  f1->SetParLimits(1, 0., 1.e4);
+	  f1->SetParameter(2, 36.);
+
 	  f2 = new TF1("f2", "landau", 10., 1500.);
+	  f2->SetParLimits(0, 0., 1.e6);
+	  f2->SetParameter(0, 3.e3);
+	  f2->SetParLimits(1, 0., 1.e4);
+	  f2->SetParameter(2, 39.);
 	}
       else if (*type=='c')
 	{
 	  east = new TH1F("east", "east", 100, 0., 80000.);
 	  west = new TH1F("west", "west", 100, 0., 80000.);
 	  f1 = new TF1("f1", "landau", 30., 40000.);
+	  f1->SetParLimits(0, 0., 1.e6);
+	  f1->SetParameter(0, 3.e3);
+	  f1->SetParLimits(1, 0., 1.e6);
+	  f1->SetParameter(2, 1200.);
+	  
 	  f2 = new TF1("f2", "landau", 30., 40000.);
+	  f2->SetParLimits(0, 0., 1.e6);
+	  f2->SetParameter(0, 3.e3);
+	  f2->SetParLimits(1, 0., 1.e6);
+	  f2->SetParameter(2, 1900.);
 	}
 
       sprintf(temp, "/extern/mabrow05/ucna/replay/2011/02252013/hists/spec_%i.root", runs[ii]);
@@ -115,18 +133,15 @@ void GAIN_FACTOR::calc_Q_MPV(GRID& g)
 		}
 	    }
 	}
-      f1->SetParLimits(0, 0., 1.e10);
-      f1->SetParLimits(1, 0., 1.e5);
+      
       Double_t max_bin = east->GetBinCenter(east->GetMaximumBin());
-      f1->SetParameters(1.e4,max_bin,10.);
+      f1->SetParameter(1, max_bin);
       east->Fit("f1", "RMBI");
       mpvEast[ii] = f1->GetParameter(1);
       //f1->Delete();
 
-      f2->SetParLimits(0, 0., 1.e10);
-      f2->SetParLimits(1, 0., 1.e5);
       max_bin = west->GetBinCenter(west->GetMaximumBin());
-      f2->SetParameters(1.e4,max_bin,10.);
+      f2->SetParameter(1, max_bin);
       west->Fit("f2", "RMBI");
       mpvWest[ii] = f2->GetParameter(1);
       //f2->Delete();
@@ -151,7 +166,7 @@ void GAIN_FACTOR::FillHisto(Float_t val, Int_t posBin)
 
 void GAIN_FACTOR::loadEta(const GRID& g)
 {
-  Int_t XeRunBegin[9] = {16983, 17561, 18081, 18390, 18712, 19873, 21596, 21966, 22961};
+  Int_t XeRunBegin[9] = {16983, 17684, 18081, 18390, 18712, 19873, 21596, 21966, 22961};
   Int_t XeRunEnd[9] = {17078, 17734, 18090, 18413, 18744, 19898, 21605, 22003, 22979};
   Int_t XeSize = 9;
   Int_t XeMin, XeMax;
