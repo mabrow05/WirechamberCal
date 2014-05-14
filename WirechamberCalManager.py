@@ -154,10 +154,10 @@ class WirechamberCalManager:
 
 if __name__ == "__main__":
 
-    if 0:
+    if 1:
         #print '1'
         geo = "2011-2012"
-        runs = [17080, 17735, 18091, 18745, 19899]
+        runs = [17080, 17735, 18091, 18433, 18745, 19899]
         for run in runs:
             cal = WirechamberCalManager(runNumber=run, anORcath = "cathode")
             cal.setDirs()
@@ -173,7 +173,7 @@ if __name__ == "__main__":
     if 1:
         #print '1'
         geo = "2011-2012"
-        runs = [17080, 17735, 18091, 18745, 19899]
+        runs = [17080, 17735, 18091, 18433, 18745, 19899]
         for run in runs:
             cal = WirechamberCalManager(runNumber=run, anORcath = "anode")
             cal.setDirs()
@@ -187,8 +187,8 @@ if __name__ == "__main__":
         gain.calcGainFactors()
 
 
-    #To calibrate data using anode
-    if 0:
+    #To calibrate data using cathode
+    if 1:
         #print '1'
         geo = "2011-2012"
         gainFile = open(os.environ["UCNA_CAL_DIR"]+"/gainFactors/gain_cathode_%s.txt"%(geo), "r")
@@ -205,8 +205,8 @@ if __name__ == "__main__":
                 cal.correctData()
         gainFile.close()
 
-    #to calibrate data using cathode
-    if 0:
+    #to calibrate data using anode
+    if 1:
         #print '1'
         geo = "2011-2012"
         gainFile = open(os.environ["UCNA_CAL_DIR"]+"/gainFactors/gain_anode_%s.txt"%(geo), "r")

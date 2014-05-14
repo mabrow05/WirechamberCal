@@ -185,7 +185,7 @@ void ANALYZER::Fit_histos(const GRID& grid)
 		  //f1->SetParLimits(1, 0.0, 40000.);
 		  f1->SetParameters(3.e3,max_bin,1700.);
 		  
-		  hisList[ll]->Fit("f1", "RMBQI"); 
+		  hisList[ll]->Fit("f1", "RMBQ"); 
 	      
 		  Double_t mpv = f1->GetParameter(1);
 	  
@@ -203,7 +203,7 @@ void ANALYZER::Fit_histos(const GRID& grid)
 
 		  f2->SetParameters(1.e4, 10000., 1700.);
 	      
-		  hisList[ll]->Fit("f2","RMBQI");
+		  hisList[ll]->Fit("f2","RMBQ");
 	      
 		  Double_t mpv = f2->GetParameter(1);
 
@@ -228,7 +228,7 @@ void ANALYZER::Fit_histos(const GRID& grid)
 		  //f1->SetParLimits(1, 0.0, 40000.);
 		  f1->SetParameters(3.e3, max_bin, 40.);
 		  
-		  hisList[ll]->Fit("f1", "RMBQI"); 
+		  hisList[ll]->Fit("f1", "RMBQ"); 
 	      
 		  Double_t mpv = f1->GetParameter(1);
 	  
@@ -246,7 +246,7 @@ void ANALYZER::Fit_histos(const GRID& grid)
 
 		  f2->SetParameters(3.e3, 200., 40.);
 	      
-		  hisList[ll]->Fit("f2","RMBQI");
+		  hisList[ll]->Fit("f2","RMBQ");
 	      
 		  Double_t mpv = f2->GetParameter(1);
 

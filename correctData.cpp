@@ -290,7 +290,7 @@ void ANALYZER::Fit_histo(const GRID& grid) //done
   //f1->SetParLimits(1, 0.0, 40000.);
   f1->SetParameters(3.e3,max_bin, 1.);
 	  
-  finalHistoE->Fit("f1", "RMBI"); 
+  finalHistoE->Fit("f1", "RMB"); 
 	      
   Double_t mpv = f1->GetParameter(1);
 
@@ -308,7 +308,7 @@ void ANALYZER::Fit_histo(const GRID& grid) //done
   //f1->SetParLimits(1, 0.0, 40000.);
   f2->SetParameters(3.e3,max_bin, 1.);
 	  
-  finalHistoW->Fit("f2", "RMBI"); 
+  finalHistoW->Fit("f2", "RMB"); 
 	      
   mpv = f2->GetParameter(1);
 

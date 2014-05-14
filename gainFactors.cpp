@@ -136,13 +136,13 @@ void GAIN_FACTOR::calc_Q_MPV(GRID& g)
       
       Double_t max_bin = east->GetBinCenter(east->GetMaximumBin());
       f1->SetParameter(1, max_bin);
-      east->Fit("f1", "RMBI");
+      east->Fit("f1", "RMB");
       mpvEast[ii] = f1->GetParameter(1);
       //f1->Delete();
 
       max_bin = west->GetBinCenter(west->GetMaximumBin());
       f2->SetParameter(1, max_bin);
-      west->Fit("f2", "RMBI");
+      west->Fit("f2", "RMB");
       mpvWest[ii] = f2->GetParameter(1);
       //f2->Delete();
       
