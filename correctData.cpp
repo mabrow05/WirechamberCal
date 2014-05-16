@@ -284,7 +284,7 @@ void ANALYZER::Fit_histo(const GRID& grid) //done
   //then fit each histogram, and call print for the app
   //appropriate values.
   Double_t max_bin = finalHistoE->GetBinCenter(finalHistoE->GetMaximumBin());
-  TF1 *f1 = new TF1("f1", "landau", 0.5, 20.);
+  TF1 *f1 = new TF1("f1", "landau", 0.1, 20.);
   //f1->SetParLimits(1, 0.0, 18000.);
   f1->SetParLimits(0, 0.0, 2.5E5);
   //f1->SetParLimits(1, 0.0, 40000.);
@@ -302,7 +302,7 @@ void ANALYZER::Fit_histo(const GRID& grid) //done
   ofileEast.close();
 
   max_bin = finalHistoW->GetBinCenter(finalHistoW->GetMaximumBin());
-  TF1 *f2 = new TF1("f2", "landau", 0.5, 20.);
+  TF1 *f2 = new TF1("f2", "landau", 0.1, 20.);
   //f1->SetParLimits(1, 0.0, 18000.);
   f2->SetParLimits(0, 0.0, 2.5E5);
   //f1->SetParLimits(1, 0.0, 40000.);

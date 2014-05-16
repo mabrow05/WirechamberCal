@@ -75,13 +75,37 @@ class WirechamberCalManager:
         self.XeRunLow = 18390 #default values chosen but just as a holder
         self.XeRunHigh = 18413
         
-        #for it in range(0,len(self.XeNums),1):
-        it = 0
-        while (it < len(XeRunBegin) and self.runNumber > XeRunBegin[it]):
-            it+=1
+        if self.runNumber>16983-1 and self.runNumber<17297+1:
+            self.XeRunLow = XeRunBegin[0]
+            self.XeRunHigh = self.XeRuns[self.XeRunLow]
 
-        self.XeRunLow = XeRunBegin[it-1]
-        self.XeRunHigh = self.XeRuns[self.XeRunLow]
+        elif self.runNumber>17359-1 and self.runNumber<17955+1:
+            self.XeRunLow = XeRunBegin[1]
+            self.XeRunHigh = self.XeRuns[self.XeRunLow]
+
+        elif self.runNumber>18081-1 and self.runNumber<18386+1:
+            self.XeRunLow = XeRunBegin[2]
+            self.XeRunHigh = self.XeRuns[self.XeRunLow]
+
+        elif self.runNumber>18390-1 and self.runNumber<18683+1:
+            self.XeRunLow = XeRunBegin[3]
+            self.XeRunHigh = self.XeRuns[self.XeRunLow]
+
+        elif self.runNumber>18712-1 and self.runNumber<19239+1:
+            self.XeRunLow = XeRunBegin[4]
+            self.XeRunHigh = self.XeRuns[self.XeRunLow]
+
+        elif self.runNumber>19347-1 and self.runNumber<19966+1:
+            self.XeRunLow = XeRunBegin[5]
+            self.XeRunHigh = self.XeRuns[self.XeRunLow]
+
+        else:
+            it = 0
+            while (it < len(XeRunBegin) and self.runNumber > XeRunBegin[it]):
+                it+=1
+            self.XeRunLow = XeRunBegin[it-1]
+            self.XeRunHigh = self.XeRuns[self.XeRunLow]
+
 	
 	print "Xenon Run range: %i - %i\n"%(self.XeRunLow,self.XeRunHigh)
 
@@ -154,7 +178,7 @@ class WirechamberCalManager:
 
 if __name__ == "__main__":
 
-    if 1:
+    if 0:
         #print '1'
         geo = "2011-2012"
         runs = [17080, 17735, 18091, 18433, 18745, 19899]
@@ -170,7 +194,7 @@ if __name__ == "__main__":
         gain.setDirs()
         gain.calcGainFactors()
 
-    if 1:
+    if 0:
         #print '1'
         geo = "2011-2012"
         runs = [17080, 17735, 18091, 18433, 18745, 19899]
