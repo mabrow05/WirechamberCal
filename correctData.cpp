@@ -111,8 +111,8 @@ void ANALYZER::etaFill(const GRID& g) //done
 
 void ANALYZER::Create_hists(const GRID& g) //done
 {
-  finalHistoE = new TH1F("MWPCE", "East Corrected Histogram", 200, 0., 50.);
-  finalHistoW = new TH1F("MWPCW", "West Corrected Histogram", 200, 0., 50.);
+  finalHistoE = new TH1F("MWPCE", "East Corrected Histogram", 100, 0., 40.);
+  finalHistoW = new TH1F("MWPCW", "West Corrected Histogram", 100, 0., 40.);
 
   cout << "Made the histograms.\n\n\n"; 
 }
@@ -283,37 +283,46 @@ void ANALYZER::Fit_histo(const GRID& grid) //done
   //here I want to read in the map values with their keys, 
   //then fit each histogram, and call print for the app
   //appropriate values.
-  Double_t max_bin = finalHistoE->GetBinCenter(finalHistoE->GetMaximumBin());
+  Double_t max_bin_hold = finalHistoE->GetBinCenter(finalHistoE->GetMaximumBin());
+  Double_t max_bin = (max_bin_hold<80) ? max_bin_hold : finalHistoE->GetBinCenter(finalHistoE->GetBin(7));
+  
   TF1 *f1 = new TF1("f1", "landau", 0.1, 20.);
   //f1->SetParLimits(1, 0.0, 18000.);
-  f1->SetParLimits(0, 0.0, 2.5E5);
+  //f1->SetParLimits(0, 0.0, 2.5E5);
   //f1->SetParLimits(1, 0.0, 40000.);
-  f1->SetParameters(3.e3,max_bin, 1.);
+  //f1->SetParameters(3.e3,max_bin, 1.);
+  f1->SetParameters(1,max_bin);
 	  
-  finalHistoE->Fit("f1", "RMB"); 
+  finalHistoE->Fit("f1", "RM"); 
 	      
   Double_t mpv = f1->GetParameter(1);
 
+  Char_t geo[10];
+  if (fileNum>=20121) sprintf(geo,"2012-2013");
+  else sprintf(geo,"2011-2012");
+  
   ofstream ofileEast;
   Char_t temp[100];
-  sprintf(temp,"East_mpvTrack_%s.dat", type);
+  sprintf(temp,"East_mpvTrack_%s_%s.dat", geo, type);
   ofileEast.open(temp, ios::app);
   ofileEast << fileNum << " " << mpv << " " << f1->GetParError(1) << endl ;
   ofileEast.close();
 
-  max_bin = finalHistoW->GetBinCenter(finalHistoW->GetMaximumBin());
+  max_bin_hold = finalHistoW->GetBinCenter(finalHistoW->GetMaximumBin());
+  max_bin = (max_bin_hold<80) ? max_bin_hold : finalHistoW->GetBinCenter(finalHistoW->GetBin(7));
   TF1 *f2 = new TF1("f2", "landau", 0.1, 20.);
-  //f1->SetParLimits(1, 0.0, 18000.);
-  f2->SetParLimits(0, 0.0, 2.5E5);
-  //f1->SetParLimits(1, 0.0, 40000.);
-  f2->SetParameters(3.e3,max_bin, 1.);
-	  
-  finalHistoW->Fit("f2", "RMB"); 
+  //f2->SetParLimits(1, 0.0, 18000.);
+  //f2->SetParLimits(0, 0.0, 2.5E5);
+  //f2->SetParLimits(1, 0.0, 40000.);
+  //f2->SetParameters(3.e3,max_bin, 1.);
+  f1->SetParameters(1,max_bin);
+
+  finalHistoW->Fit("f2", "RM"); 
 	      
   mpv = f2->GetParameter(1);
-
+ 
   ofstream ofileWest;
-  sprintf(temp,"West_mpvTrack_%s.dat", type);
+  sprintf(temp,"West_mpvTrack_%s_%s.dat", geo, type);
   ofileWest.open(temp, ios::app);
   ofileWest << fileNum << " " << mpv << " " << f2->GetParError(1) << endl ;
   ofileWest.close();

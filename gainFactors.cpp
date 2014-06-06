@@ -25,7 +25,7 @@ GAIN_FACTOR::GAIN_FACTOR(Char_t* t, Char_t* f, Int_t n, Int_t emin, Int_t emax)
   gEast.resize(runs.size(), 0.);
 
   cout << endl;
-  Char_t geometry[10];
+ 
   if (run>20120) {sprintf(geometry,"2012-2013");}
   else {sprintf(geometry,"2011-2012");}
   sprintf(temp,"%s/gainFactors/gain_%s_%s.txt", CalDir, t, geometry);
@@ -52,35 +52,35 @@ void GAIN_FACTOR::calc_Q_MPV(GRID& g)
 	{
 	  east = new TH1F("east", "east", 100, 0., 2500.);
 	  west = new TH1F("west", "west", 100, 0., 2500.);
-	  f1 = new TF1("f1", "landau", 10., 1500.);
-	  f1->SetParLimits(0, 0., 1.e6);
+	  f1 = new TF1("f1", "landau", 0.5, 1500.);
+	  //f1->SetParLimits(0, 0., 1.e6);
 	  f1->SetParameter(0, 3.e3);
-	  f1->SetParLimits(1, 0., 1.e4);
+	  //f1->SetParLimits(1, 0., 1.e4);
 	  f1->SetParameter(2, 36.);
 
-	  f2 = new TF1("f2", "landau", 10., 1500.);
-	  f2->SetParLimits(0, 0., 1.e6);
+	  f2 = new TF1("f2", "landau", 0.5, 1500.);
+	  //f2->SetParLimits(0, 0., 1.e6);
 	  f2->SetParameter(0, 3.e3);
-	  f2->SetParLimits(1, 0., 1.e4);
+	  //f2->SetParLimits(1, 0., 1.e4);
 	  f2->SetParameter(2, 39.);
 	}
       else if (*type=='c')
 	{
-	  east = new TH1F("east", "east", 100, 0., 80000.);
-	  west = new TH1F("west", "west", 100, 0., 80000.);
+	  east = new TH1F("east", "east", 100, 0., 100000.);
+	  west = new TH1F("west", "west", 100, 0., 100000.);
 	  f1 = new TF1("f1", "landau", 30., 40000.);
-	  f1->SetParLimits(0, 0., 1.e6);
+	  //f1->SetParLimits(0, 0., 1.e6);
 	  f1->SetParameter(0, 3.e3);
-	  f1->SetParLimits(1, 0., 1.e6);
+	  //f1->SetParLimits(1, 0., 1.e6);
 	  f1->SetParameter(2, 1200.);
 	  
 	  f2 = new TF1("f2", "landau", 30., 40000.);
-	  f2->SetParLimits(0, 0., 1.e6);
+	  //f2->SetParLimits(0, 0., 1.e6);
 	  f2->SetParameter(0, 3.e3);
-	  f2->SetParLimits(1, 0., 1.e6);
+	  //f2->SetParLimits(1, 0., 1.e6);
 	  f2->SetParameter(2, 1900.);
 	}
-
+      //Char_t *dataDir = getenv("UCNAOUTPUTDIR");
       sprintf(temp, "/extern/mabrow05/ucna/replay/2011/02252013/hists/spec_%i.root", runs[ii]);
       TFile *f = new TFile(temp, "READ");
       TTree *Tin = (TTree*)(f->Get("phys"));
@@ -134,15 +134,17 @@ void GAIN_FACTOR::calc_Q_MPV(GRID& g)
 	    }
 	}
       
-      Double_t max_bin = east->GetBinCenter(east->GetMaximumBin());
+      Double_t max_bin_hold = east->GetBinCenter(east->GetMaximumBin());
+      Double_t max_bin = max_bin_hold<80 ? max_bin_hold : east->GetBinCenter(east->GetBin(7));
       f1->SetParameter(1, max_bin);
-      east->Fit("f1", "RMB");
+      east->Fit("f1", "RM");
       mpvEast[ii] = f1->GetParameter(1);
       //f1->Delete();
 
-      max_bin = west->GetBinCenter(west->GetMaximumBin());
+      max_bin_hold = west->GetBinCenter(west->GetMaximumBin());
+      max_bin = max_bin_hold<80 ? max_bin_hold : west->GetBinCenter(west->GetBin(7));
       f2->SetParameter(1, max_bin);
-      west->Fit("f2", "RMB");
+      west->Fit("f2", "RM");
       mpvWest[ii] = f2->GetParameter(1);
       //f2->Delete();
       
@@ -159,9 +161,42 @@ Float_t GAIN_FACTOR::calcQ()
 
 void GAIN_FACTOR::FillHisto(Float_t val, Int_t posBin)
 {
-  if (Side==0 && EvisE>Emin && EvisE<Emax) east->Fill(val/etaEast[posBin]);
-  else if (Side==1 && EvisW>Emin && EvisW<Emax) west->Fill(val/etaWest[posBin]);
+  if (runs[0]>17387 && runs[0]<17863)
+    {
+      if (Side==0 && EvisE>475. && EvisE<675.) east->Fill(val/etaEast[posBin]);
+      else if (Side==1 && EvisW>575. && EvisW<775.) west->Fill(val/etaWest[posBin]);
+    }
+  else
+    {
+       if (Side==0 && EvisE>Emin && EvisE<Emax) east->Fill(val/etaEast[posBin]);
+      else if (Side==1 && EvisW>Emin && EvisW<Emax) west->Fill(val/etaWest[posBin]);
+    }
 }
+
+void GAIN_FACTOR::load_Q_MPV(GRID& g)
+{
+  Char_t t[500];
+  sprintf(t,"%s/betaRunsMPV/corrected_MPV_%s_%s.txt",getenv("UCNA_CAL_DIR"), type, geometry);
+  ifstream Qin;
+  Qin.open(t);
+  cout << "Opened " << t << endl;
+  Int_t runHold;
+  Double_t Ehold, Whold;
+  while (Qin >> runHold >> Ehold >> Whold)
+    {
+      cout << runHold << " " << Ehold << " " << Whold << endl;
+      for (UInt_t i=0; i<runs.size(); i++)
+	{
+	  if (runHold==runs[i]) 
+	    {
+	      mpvEast[i]=Ehold;
+	      mpvWest[i]=Whold;
+	      
+	    }
+	}
+    }
+}
+
 
 
 void GAIN_FACTOR::loadEta(const GRID& g)
@@ -174,18 +209,68 @@ void GAIN_FACTOR::loadEta(const GRID& g)
   etaEast.resize(g.numBins, 0.);
   etaWest.resize(g.numBins, 0.);
   
-  Int_t it = 0;
-  while (it<XeSize && runs[0]>XeRunBegin[it]) it+=1;
-  if (it==0)
+  if (runs[0]>=16983 && runs[0]<=17358)
     {
       XeMin=XeRunBegin[0];
       XeMax=XeRunEnd[0];
     }
-  else 
+  else if (runs[0]>=17359 && runs[0]<=18055)
     {
-      XeMin=XeRunBegin[it-1];
-      XeMax=XeRunEnd[it-1];
+      XeMin=XeRunBegin[1];
+      XeMax=XeRunEnd[1];
     }
+  else if (runs[0]>=18081 && runs[0]<=18386)
+    {
+      XeMin=XeRunBegin[2];
+      XeMax=XeRunEnd[2];
+    }
+  else if (runs[0]>=18390 && runs[0]<=18683)
+    {
+      XeMin=XeRunBegin[3];
+      XeMax=XeRunEnd[3];
+    }
+  else if (runs[0]>=18712 && runs[0]<=19239)
+    {
+      XeMin=XeRunBegin[4];
+      XeMax=XeRunEnd[4];
+    }
+  else if (runs[0]>=19347 && runs[0]<=20000)
+    {
+      XeMin=XeRunBegin[5];
+      XeMax=XeRunEnd[5];
+    }
+  else if (runs[0]>=20000 && runs[0]<=21605)
+    {
+      XeMin = XeRunBegin[6];
+      XeMax = XeRunEnd[6];
+    }
+
+  else if (runs[0]>=21607 && runs[0]<=22238)
+    {
+      XeMin = XeRunBegin[7];
+      XeMax = XeRunEnd[7];
+    }
+  else if (runs[0]>=22294 && runs[0]<=23173)
+    {
+      XeMin = XeRunBegin[8];
+      XeMax = XeRunEnd[8];
+    }
+  else
+    {
+      Int_t it = 0;
+      while (it<XeSize && runs[0]>XeRunBegin[it]) it+=1;
+      if (it==0)
+	{
+	  XeMin=XeRunBegin[0];
+	  XeMax=XeRunEnd[0];
+	}
+      else 
+	{
+	  XeMin=XeRunBegin[it-1];
+	  XeMax=XeRunEnd[it-1];
+	}
+    }
+
   Char_t *CalDir = getenv("UCNA_CAL_DIR");
   Char_t temp1[500];
   ifstream in1, in2;
@@ -213,7 +298,7 @@ void GAIN_FACTOR::simMPV()
 {
   Char_t *CalDir = getenv("UCNA_CAL_DIR");
   Char_t temp2[500];
-  sprintf(temp2, "%s/Sims/Beta_%i-%ikev_east.dat", CalDir,Emin,Emax);
+  sprintf(temp2, "%s/Sims/Beta_%i-%ikev_%s_east.dat", CalDir,Emin,Emax,geometry);
   cout << "East Sim File: " << temp2 << endl;
   ifstream in1, in2;
   in1.open(temp2);
@@ -221,7 +306,7 @@ void GAIN_FACTOR::simMPV()
   in1 >> emin >> emax >> simEast;
   in1.close();
   
-  sprintf(temp2, "%s/Sims/Beta_%i-%ikev_west.dat", CalDir,Emin,Emax);
+  sprintf(temp2, "%s/Sims/Beta_%i-%ikev_%s_west.dat", CalDir,Emin,Emax,geometry);
    cout << "West Sim File: " << temp2 << endl;
   in2.open(temp2);
   in2 >> emin >> emax >> simWest;
@@ -238,22 +323,23 @@ void GAIN_FACTOR::calc_gain()
       gWest[jj] = simWest/mpvWest[jj];
 
       outfile << runs[jj] << " " << gEast[jj] << " " << gWest[jj] << endl;
-      outfile1 << runs[jj] << " " << mpvEast[jj] << " " << mpvWest[jj] << endl;
+      cout << runs[jj] << " " << mpvEast[jj] << " " << mpvWest[jj] << endl;
     }
 }
 
 
 int main(int argc, char *argv[])
 {
-  if (argc<6)
+  if (argc<7)
     {
-      cout << "Usage: ./gainFactors.exe [nrings] [anode/cathode] [file w/ runs] [Emin] [Emax]" << endl;
+      cout << "Usage: ./gainFactors.exe [nrings] [anode/cathode] [file w/ runs] [Emin] [Emax] [calc/load (MPV of data)]" << endl;
     } 
 
   GRID grid(atoi(argv[1]));
   GAIN_FACTOR g(argv[2], argv[3], atoi(argv[1]), atoi(argv[4]), atoi(argv[5]));
   g.loadEta(grid);
-  g.calc_Q_MPV(grid);
+  if (*argv[6]=='c') g.calc_Q_MPV(grid);
+  else g.load_Q_MPV(grid);
   g.simMPV();
   g.calc_gain();
 }

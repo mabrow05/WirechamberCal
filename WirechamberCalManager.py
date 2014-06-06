@@ -42,23 +42,43 @@ class WirechamberCalManager:
 		os.system("mkdir %s"%(self.GainDir))
         if not os.path.exists(self.betaRunMPVDir):
             os.system("mkdir %s"%(self.betaRunMPVDir))
+
+
+    def cleanDirsForNewRun(self, Xe=False, posMap=False, CalData=False, Sim=False, XeAll=False, CalDataAll=False):
+        if Sim:
+            os.system("cd %s ; rm *%i-%i*"%(self.SimDir, self.Emin, self.Emax))
+
+        if Xe:
+            if XeAll:
+                os.system("cd %s ; rm *%irings%i-%i*"%(self.XeDir, self.nrings, self.Emin, self.Emax))
+            else:
+                os.system("cd %s ; rm *%s_%irings%i-%i*"%(self.XeDir, self.anORcath, self.nrings, self.Emin, self.Emax))   
+
+        if posMap: #generated fast so remove them all every time
+            os.system("cd %s ; rm *%i-%i*"%(self.posMapDir, self.Emin, self.Emax))
    
+        if CalData:
+            if CalDataAll:
+                os.system("cd %s ; rm *%irings_%i-%ikev_%s*"%(self.XeDir, self.nrings, self.Emin, self.Emax, self.anORcath))
+            else:
+                os.system("cd %s ; rm *%i_%irings_%i-%ikev_%s*"%(self.XeDir, self.runNumber, self.nrings, self.Emin, self.Emax, self.anORcath))
+
 
     def runSimData(self):
-        #first check that the simulated data for EnBin doesn't exists
+        #first check that the simulated data for EnBin doesn't exist
         #if it does, then exit. If it doesn't, then run the simdata code
-        if self.runNumber > 20120:
+        if self.runNumber >= 20121:
             self.geometry = "2012-2013"
         else:
             self.geometry = "2011-2012"
 
-        if not fileExistsAndNotEmpty(self.SimDir+"/"+"Beta_%i-%ikev_east.dat"%(self.Emin, self.Emax)):
+        if not fileExistsAndNotEmpty(self.SimDir+"/"+"Beta_%i-%ikev_%s_east.dat"%(self.Emin, self.Emax, self.geometry)):
             	os.system("./simData.exe %i %i %i %s" %(10,self.Emin, self.Emax, self.geometry))
 		print "Finished Simulated data....\n"	
 	else:
 		print "Simulated data already existed for this Energy Bin!\n"
 
-        if not fileExistsAndNotEmpty(self.SimDir+"/Beta_%i-%ikev_east.dat"%(self.Emin, self.Emax)):
+        if not fileExistsAndNotEmpty(self.SimDir+"/Beta_%i-%ikev_%s_east.dat"%(self.Emin, self.Emax, self.geometry)):
             print "PROBLEM WITH OBTAINING SIMULATED DATA"
             exit(0)
 	
@@ -75,28 +95,40 @@ class WirechamberCalManager:
         self.XeRunLow = 18390 #default values chosen but just as a holder
         self.XeRunHigh = 18413
         
-        if self.runNumber>16983-1 and self.runNumber<17297+1:
+        if self.runNumber>=16983 and self.runNumber<=17358:
             self.XeRunLow = XeRunBegin[0]
             self.XeRunHigh = self.XeRuns[self.XeRunLow]
 
-        elif self.runNumber>17359-1 and self.runNumber<17955+1:
+        elif self.runNumber>=17359 and self.runNumber<=18055:
             self.XeRunLow = XeRunBegin[1]
             self.XeRunHigh = self.XeRuns[self.XeRunLow]
 
-        elif self.runNumber>18081-1 and self.runNumber<18386+1:
+        elif self.runNumber>=18081 and self.runNumber<=18386:
             self.XeRunLow = XeRunBegin[2]
             self.XeRunHigh = self.XeRuns[self.XeRunLow]
 
-        elif self.runNumber>18390-1 and self.runNumber<18683+1:
+        elif self.runNumber>=18390 and self.runNumber<=18683:
             self.XeRunLow = XeRunBegin[3]
             self.XeRunHigh = self.XeRuns[self.XeRunLow]
 
-        elif self.runNumber>18712-1 and self.runNumber<19239+1:
+        elif self.runNumber>=18712 and self.runNumber<=19239:
             self.XeRunLow = XeRunBegin[4]
             self.XeRunHigh = self.XeRuns[self.XeRunLow]
 
-        elif self.runNumber>19347-1 and self.runNumber<19966+1:
+        elif self.runNumber>=19347 and self.runNumber<=20000:
             self.XeRunLow = XeRunBegin[5]
+            self.XeRunHigh = self.XeRuns[self.XeRunLow]
+
+        elif self.runNumber>=20000 and self.runNumber<=21605:
+            self.XeRunLow = XeRunBegin[6]
+            self.XeRunHigh = self.XeRuns[self.XeRunLow]
+
+        elif self.runNumber>=21607 and self.runNumber<=22238:
+            self.XeRunLow = XeRunBegin[7]
+            self.XeRunHigh = self.XeRuns[self.XeRunLow]
+
+        elif self.runNumber>=22294 and self.runNumber<=23173:
+            self.XeRunLow = XeRunBegin[8]
             self.XeRunHigh = self.XeRuns[self.XeRunLow]
 
         else:
@@ -136,7 +168,8 @@ class WirechamberCalManager:
             print "Position Map already Exists\n"
 
 
-    def calcGainFactors(self, geometry="2011-2012"): 
+    def calcGainFactors(self, geometry="2011-2012", loadORcalc="calc"): 
+        self.loadORcalc=loadORcalc
         if os.path.isfile(self.GainDir+"/gain_%s_%s.txt"%(self.anORcath, geometry)):
             os.system("rm %s"%(self.GainDir+"/gain_%s_%s.txt"%(self.anORcath, geometry)))
             os.system("rm %s"%(self.betaRunMPVDir+"/MPV_%s_%s.txt"%(self.anORcath, geometry)))
@@ -151,7 +184,7 @@ class WirechamberCalManager:
                     print "File %s doesn't exist..."%(runs[i])
             runFile.close()
             #if int(runs[0])>18432 and int(runs[0])<18682:
-            os.system("./gainFactors.exe %i %s %s %i %i"%(self.nrings, self.anORcath,'runHold.txt', self.Emin, self.Emax))
+            os.system("./gainFactors.exe %i %s %s %i %i %s"%(self.nrings, self.anORcath,'runHold.txt', self.Emin, self.Emax, self.loadORcalc))
             
         octetFile.close()
 
@@ -178,10 +211,46 @@ class WirechamberCalManager:
 
 if __name__ == "__main__":
 
-    if 0:
-        #print '1'
-        geo = "2011-2012"
-        runs = [17080, 17735, 18091, 18433, 18745, 19899]
+
+    #/////////////////////////////////// For CLEANUP PURPOSES only ///////////////////////////////////////////#
+    if 1:
+
+        if 1: 
+            t = ["anode","cathode"]
+            for poo in t:
+                #os.system("rm *2011-2012_%s.dat"%poo)
+                os.system("rm *2012-2013_%s.dat"%poo)
+
+        #new calibrated data
+        if 0:
+            t = ["anode","cathode"]
+            run = 18333;
+            for poo in t:
+                clean = WirechamberCalManager(anORcath=t, runNumber=run)
+                clean.CleanDirsForNewRun(CalData=True, CalDataAll=False)    
+        
+        # To clean both Xe fitted data and posMaps for new Maps
+        if 0:
+            clean = WirechamberCalManager()
+            clean.CleanDirsForNewRun(Xe=True, XeAll=True, posMap=True)
+
+        #Cleaning either cathode or anode data for Xe fitted data and all posmaps
+        if 0:
+            t = "anode"             
+            clean = WirechamberCalManager(anORcath=t)
+            clean.CleanDirsForNewRun(Xe=True)
+#//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        
+
+    if 1:
+        #print '1' 2011-2012 [17080, 17735, 18091, 18433, 18745, 19899] 2012-2013 [21000, 22000, 23000]
+        geo = "2012-2013"
+        if geo[3]=='1':
+            runs = [17080, 17735, 18091, 18433, 18745, 19899]
+        else:
+            runs = [21000, 22000, 23000]
+        print runs
         for run in runs:
             cal = WirechamberCalManager(runNumber=run, anORcath = "cathode")
             cal.setDirs()
@@ -192,12 +261,15 @@ if __name__ == "__main__":
 
         gain = WirechamberCalManager(anORcath = "cathode")
         gain.setDirs()
-        gain.calcGainFactors()
+        gain.calcGainFactors(geometry=geo, loadORcalc="calc")
 
-    if 0:
+    if 1:
         #print '1'
-        geo = "2011-2012"
-        runs = [17080, 17735, 18091, 18433, 18745, 19899]
+        geo = "2012-2013"
+        if geo[3]=='1':
+            runs = [17080, 17735, 18091, 18433, 18745, 19899]
+        else:
+            runs = [21000, 22000, 23000]
         for run in runs:
             cal = WirechamberCalManager(runNumber=run, anORcath = "anode")
             cal.setDirs()
@@ -208,47 +280,46 @@ if __name__ == "__main__":
 
         gain = WirechamberCalManager(anORcath = "anode")
         gain.setDirs()
-        gain.calcGainFactors()
+        gain.calcGainFactors(geometry=geo, loadORcalc="calc")
 
 
     #To calibrate data using cathode
     if 1:
         #print '1'
-        geo = "2011-2012"
+        geo = "2012-2013"
         gainFile = open(os.environ["UCNA_CAL_DIR"]+"/gainFactors/gain_cathode_%s.txt"%(geo), "r")
         for line in gainFile:
             nums=line.split()
             print nums[0]
-            if int(nums[0])<19966:
-                cal = WirechamberCalManager(runNumber=int(nums[0]), anORcath = "cathode")
-                cal.setDirs()
-                cal.runSimData()
-                cal.findXeRun()
-                cal.runXeData()
-                cal.runPosMap()
-                cal.correctData()
+            
+            cal = WirechamberCalManager(runNumber=int(nums[0]), anORcath = "cathode")
+            cal.setDirs()
+            cal.runSimData()
+            cal.findXeRun()
+            cal.runXeData()
+            cal.runPosMap()
+            cal.correctData()
         gainFile.close()
 
     #to calibrate data using anode
     if 1:
         #print '1'
-        geo = "2011-2012"
+        geo = "2012-2013"
         gainFile = open(os.environ["UCNA_CAL_DIR"]+"/gainFactors/gain_anode_%s.txt"%(geo), "r")
         for line in gainFile:
             nums=line.split()
             print nums[0]
-            if int(nums[0])<19966:
-                cal = WirechamberCalManager(runNumber=int(nums[0]), anORcath = "anode")
-                cal.setDirs()
-                cal.runSimData()
-                cal.findXeRun()
-                cal.runXeData()
-                cal.runPosMap()
-                cal.correctData()
+            
+            cal = WirechamberCalManager(runNumber=int(nums[0]), anORcath = "anode")
+            cal.setDirs()
+            cal.runSimData()
+            cal.findXeRun()
+            cal.runXeData()
+            cal.runPosMap()
+            cal.correctData()
         gainFile.close()
 
 
-    
-        
+
 
 

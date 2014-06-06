@@ -25,6 +25,7 @@ class GAIN_FACTOR
   GAIN_FACTOR(Char_t* type, Char_t* file, Int_t nrings,Int_t emin, Int_t emax ); //loads runs in octet and opens output file
   void loadEta(const GRID&); //loads the eta factors. 
   void calc_Q_MPV(GRID&); //Calculates the MPV of the signal depending on whether it is anode or cathode method
+  void load_Q_MPV(GRID&); //Loads already calculated MPV of the signal depending on whether it is anode or cathode method
   //void findEta(); //finds the appropriate eta value from a set of Xe runs
   void simMPV(); //loads the simulated MPV values from beta sims
   void calc_gain(); //Calculates the gain and writes to file
@@ -44,6 +45,7 @@ class GAIN_FACTOR
   vector <Double_t> gEast;
   ofstream outfile, outfile1;
   Int_t nrings;
+  Char_t geometry[10];
   TH1F *east;
   TH1F *west;
   TF1 *f1, *f2;

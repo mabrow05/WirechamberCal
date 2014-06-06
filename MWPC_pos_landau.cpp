@@ -51,10 +51,10 @@ void ANALYZER::Create_hists(const GRID& g)
   
   Int_t nHists = g.numBins;
   Char_t temp3[10];
-  Int_t nbins = 500;
+  Int_t nbins = 100;
   Float_t low = 0., high = 150000.;
 
-  if (*type=='a') {high = 2500.;}
+  if (*type=='a') {high = 3500.;}
   hisList.resize(nHists, 0);
 
   for (Int_t ii=0; ii<nHists; ii++)
@@ -175,17 +175,18 @@ void ANALYZER::Fit_histos(const GRID& grid)
 	{
 	  if (hisList[ll]->GetEntries() > 0)
 	    {
-	      if (hisList[ll]->GetMaximumBin() > 2 || hisList[ll]->GetMaximumBin()<134)
+	      //Check that maximum bin isn't in the overflow or underflow
+	      if (hisList[ll]->GetMaximumBin() > 2 || hisList[ll]->GetMaximumBin()<80)
 		{
 		  max_bin = hisList[ll]->GetBinCenter(hisList[ll]->GetMaximumBin());
 		  
 		  TF1 *f1 = new TF1("f1", "landau", 500., 40000.);
 		  //f1->SetParLimits(1, 0.0, 18000.);
-		  f1->SetParLimits(0, 0.0, 2.5E6);
+		  //f1->SetParLimits(0, 0.0, 2.5E6);
 		  //f1->SetParLimits(1, 0.0, 40000.);
 		  f1->SetParameters(3.e3,max_bin,1700.);
 		  
-		  hisList[ll]->Fit("f1", "RMBQ"); 
+		  hisList[ll]->Fit("f1", "RMQ"); 
 	      
 		  Double_t mpv = f1->GetParameter(1);
 	  
@@ -219,7 +220,8 @@ void ANALYZER::Fit_histos(const GRID& grid)
 	{
 	  if (hisList[ll]->GetEntries() > 0)
 	    {
-	      if (hisList[ll]->GetMaximumBin() > 2 || hisList[ll]->GetMaximumBin()<134)
+	      //Check that maximum bin isn't in the overflow or underflow
+	      if (hisList[ll]->GetMaximumBin() > 2 || hisList[ll]->GetMaximumBin()<80)
 		{
 		  max_bin = hisList[ll]->GetBinCenter(hisList[ll]->GetMaximumBin());
 		  

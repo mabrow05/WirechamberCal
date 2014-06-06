@@ -1,5 +1,7 @@
 {
   /////////////////////////CATHODE////////////////////////////////
+
+  Char_t geo[10] = "2012-2013";
   if (true)
     {
       ifstream infileEast, infileWest;
@@ -9,8 +11,8 @@
       
       Char_t east[100], west[100];
       
-      sprintf(east, "East_mpvTrack_%s.dat", t);
-      sprintf(west, "West_mpvTrack_%s.dat", t);
+      sprintf(east, "East_mpvTrack_%s_%s.dat", geo, t);
+      sprintf(west, "West_mpvTrack_%s_%s.dat", geo, t);
       
       infileEast.open(east);
       infileWest.open(west);
@@ -106,8 +108,8 @@
       
       Char_t east[100], west[100];
       
-      sprintf(east, "East_mpvTrack_%s.dat", t);
-      sprintf(west, "West_mpvTrack_%s.dat", t);
+      sprintf(east, "East_mpvTrack_%s_%s.dat", geo, t);
+      sprintf(west, "West_mpvTrack_%s_%s.dat", geo, t);
       
       infileEast.open(east);
       infileWest.open(west);
