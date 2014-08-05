@@ -23,7 +23,7 @@ using namespace std;
 class ANALYZER
 {
  public:
-  ANALYZER(Int_t NumRings, Int_t file_num, Int_t XeBegin, Int_t XeEnd, Int_t emin, Int_t emax, Char_t* t); //constructor
+  ANALYZER(Int_t NumRings, Int_t file_num, Int_t XeBegin, Int_t XeEnd, Int_t emin, Int_t emax, Char_t* t, Char_t* runtype); //constructor
   void SetDirs();
   //Int_t find_Ebin(Double_t E);
   void Print(const GRID&, Int_t hisNum, Double_t MPV);
@@ -40,6 +40,7 @@ class ANALYZER
   TH1F *finalHistoW;
   Char_t* side; //This is the selected side
   Char_t* type;
+  Char_t* runType;
   Int_t PID, Type, Side, XeFileBegin, XeFileEnd, Emin, Emax, numEnBins, fileNum;
   Float_t charge_cl, ChClCorrected, AnodeCorrected;
   Float_t x_centerE, y_centerE, x_heightE, y_heightE, x_widthE, y_widthE, EvisE, AnodeE;

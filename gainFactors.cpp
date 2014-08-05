@@ -3,13 +3,14 @@
 
 using namespace std;
 
-GAIN_FACTOR::GAIN_FACTOR(Char_t* t, Char_t* f, Int_t n, Int_t emin, Int_t emax)
+GAIN_FACTOR::GAIN_FACTOR(Char_t* t, Char_t* f, Int_t n, Int_t emin, Int_t emax, Char_t* runtype)
 {
   type = t;
   nrings = n;
   Emin = emin;
   Emax = emax;
   Char_t *CalDir = getenv("UCNA_CAL_DIR");
+  sprintf(runType, "%s", runtype);
   Char_t temp[200];
   sprintf(temp,"%s",f);
   Int_t run;
@@ -28,10 +29,10 @@ GAIN_FACTOR::GAIN_FACTOR(Char_t* t, Char_t* f, Int_t n, Int_t emin, Int_t emax)
  
   if (run>20120) {sprintf(geometry,"2012-2013");}
   else {sprintf(geometry,"2011-2012");}
-  sprintf(temp,"%s/gainFactors/gain_%s_%s.txt", CalDir, t, geometry);
+  sprintf(temp,"%s/gainFactors/gain_%s_%s_%s.txt", CalDir, t, geometry, runType);
   outfile.open(temp, ios::app);
   
-  sprintf(temp,"%s/betaRunsMPV/MPV_%s_%s.txt", CalDir, t, geometry);
+  sprintf(temp,"%s/betaRunsMPV/MPV_%s_%s_%s.txt", CalDir, t, geometry, runType);
   outfile1.open(temp, ios::app);
 }
 
@@ -201,59 +202,54 @@ void GAIN_FACTOR::load_Q_MPV(GRID& g)
 
 void GAIN_FACTOR::loadEta(const GRID& g)
 {
-  Int_t XeRunBegin[9] = {16983, 17684, 18081, 18390, 18712, 19873, 21596, 21966, 22961};
-  Int_t XeRunEnd[9] = {17078, 17734, 18090, 18413, 18744, 19898, 21605, 22003, 22979};
+  Int_t XeRunBegin[9] = {17570, 18081, 18390, 18712, 19873, 21596, 21966, 22961};
+  Int_t XeRunEnd[9] = {17610, 18090, 18413, 18744, 19898, 21605, 22003, 22979};
   Int_t XeSize = 9;
   Int_t XeMin, XeMax;
 
   etaEast.resize(g.numBins, 0.);
   etaWest.resize(g.numBins, 0.);
   
-  if (runs[0]>=16983 && runs[0]<=17358)
+  if (runs[0]>=16983 && runs[0]<=18055)
     {
       XeMin=XeRunBegin[0];
       XeMax=XeRunEnd[0];
     }
-  else if (runs[0]>=17359 && runs[0]<=18055)
+  else if (runs[0]>=18081 && runs[0]<=18386)
     {
       XeMin=XeRunBegin[1];
       XeMax=XeRunEnd[1];
     }
-  else if (runs[0]>=18081 && runs[0]<=18386)
+  else if (runs[0]>=18390 && runs[0]<=18683)
     {
       XeMin=XeRunBegin[2];
       XeMax=XeRunEnd[2];
     }
-  else if (runs[0]>=18390 && runs[0]<=18683)
+  else if (runs[0]>=18712 && runs[0]<=19239)
     {
       XeMin=XeRunBegin[3];
       XeMax=XeRunEnd[3];
     }
-  else if (runs[0]>=18712 && runs[0]<=19239)
+  else if (runs[0]>=19347 && runs[0]<=20000)
     {
       XeMin=XeRunBegin[4];
       XeMax=XeRunEnd[4];
     }
-  else if (runs[0]>=19347 && runs[0]<=20000)
+  else if (runs[0]>=20121 && runs[0]<=21605)
     {
-      XeMin=XeRunBegin[5];
-      XeMax=XeRunEnd[5];
-    }
-  else if (runs[0]>=20000 && runs[0]<=21605)
-    {
-      XeMin = XeRunBegin[6];
-      XeMax = XeRunEnd[6];
+      XeMin = XeRunBegin[5];
+      XeMax = XeRunEnd[5];
     }
 
   else if (runs[0]>=21607 && runs[0]<=22238)
     {
-      XeMin = XeRunBegin[7];
-      XeMax = XeRunEnd[7];
+      XeMin = XeRunBegin[6];
+      XeMax = XeRunEnd[6];
     }
   else if (runs[0]>=22294 && runs[0]<=23173)
     {
-      XeMin = XeRunBegin[8];
-      XeMax = XeRunEnd[8];
+      XeMin = XeRunBegin[7];
+      XeMax = XeRunEnd[7];
     }
   else
     {
@@ -298,7 +294,7 @@ void GAIN_FACTOR::simMPV()
 {
   Char_t *CalDir = getenv("UCNA_CAL_DIR");
   Char_t temp2[500];
-  sprintf(temp2, "%s/Sims/Beta_%i-%ikev_%s_east.dat", CalDir,Emin,Emax,geometry);
+  sprintf(temp2, "%s/Sims/%s_%i-%ikev_%s_east.dat", CalDir,runType,Emin,Emax,geometry);
   cout << "East Sim File: " << temp2 << endl;
   ifstream in1, in2;
   in1.open(temp2);
@@ -306,7 +302,7 @@ void GAIN_FACTOR::simMPV()
   in1 >> emin >> emax >> simEast;
   in1.close();
   
-  sprintf(temp2, "%s/Sims/Beta_%i-%ikev_%s_west.dat", CalDir,Emin,Emax,geometry);
+  sprintf(temp2, "%s/Sims/%s_%i-%ikev_%s_west.dat", CalDir,runType,Emin,Emax,geometry);
    cout << "West Sim File: " << temp2 << endl;
   in2.open(temp2);
   in2 >> emin >> emax >> simWest;
@@ -323,20 +319,20 @@ void GAIN_FACTOR::calc_gain()
       gWest[jj] = simWest/mpvWest[jj];
 
       outfile << runs[jj] << " " << gEast[jj] << " " << gWest[jj] << endl;
-      cout << runs[jj] << " " << mpvEast[jj] << " " << mpvWest[jj] << endl;
+      outfile1 << runs[jj] << " " << mpvEast[jj] << " " << mpvWest[jj] << endl;
     }
 }
 
 
 int main(int argc, char *argv[])
 {
-  if (argc<7)
+  if (argc<8)
     {
-      cout << "Usage: ./gainFactors.exe [nrings] [anode/cathode] [file w/ runs] [Emin] [Emax] [calc/load (MPV of data)]" << endl;
+      cout << "Usage: ./gainFactors.exe [nrings] [anode/cathode] [file w/ runs] [Emin] [Emax] [calc/load (MPV of data)] [runType]" << endl;
     } 
 
   GRID grid(atoi(argv[1]));
-  GAIN_FACTOR g(argv[2], argv[3], atoi(argv[1]), atoi(argv[4]), atoi(argv[5]));
+  GAIN_FACTOR g(argv[2], argv[3], atoi(argv[1]), atoi(argv[4]), atoi(argv[5]), argv[7]);
   g.loadEta(grid);
   if (*argv[6]=='c') g.calc_Q_MPV(grid);
   else g.load_Q_MPV(grid);

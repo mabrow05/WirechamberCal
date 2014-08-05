@@ -1,46 +1,44 @@
 {
   /////////////////////////CATHODE////////////////////////////////
-
+  Char_t *runtype = "Beta";
   Char_t geo[10] = "2012-2013";
   if (true)
     {
       ifstream infileEast, infileWest;
       Char_t *t="cathode";
+      
       //*t="anode";
       //*t="cathode";
       
       Char_t east[100], west[100];
       
-      sprintf(east, "East_mpvTrack_%s_%s.dat", geo, t);
-      sprintf(west, "West_mpvTrack_%s_%s.dat", geo, t);
+      sprintf(east, "East_mpvTrack_%s_%s_%s.dat", geo, t, runtype);
+      sprintf(west, "West_mpvTrack_%s_%s_%s.dat", geo, t, runtype);
       
+      Int_t Eruns=0, Wruns=0;
+      Double_t run, mpv, error;
       infileEast.open(east);
       infileWest.open(west);
-      Double_t run, mpv, error;
-      Int_t Wruns=0, Eruns=0;
+      
       while (infileWest >> run >> mpv >> error)
 	{
-	  if (mpv<10. && mpv>0. && error <2.)
-	    {
-	      Wruns++;
-	    }
+	  Wruns++;
 	}
       
       while (infileEast >> run >> mpv >> error)
 	{
-	  if (mpv<10. && mpv>0. && error <2.)
-	    {
-	      Eruns++;
-	    }
+	  Eruns++;
 	}
       infileEast.close();    
       infileWest.close();
+
       Double_t EastRun[Eruns];
       Double_t WestRun[Wruns];
       Double_t EastMPV[Eruns];
       Double_t WestMPV[Wruns];
       Double_t EastError[Eruns];
       Double_t WestError[Wruns];
+     
       
       infileWest.open(west);
       infileEast.open(east);
@@ -50,40 +48,34 @@
       Int_t jj=0;
       while (infileWest >> run >> mpv >> error)
 	{
-	  if (mpv<10. && mpv>0. && error <2.)
-	    {
-	      WestRun[jj]=run; 
-	      WestMPV[jj]=mpv;
-	      WestError[jj]=error;
-	      jj++;
-	    }
+	  WestRun[jj]=run; 
+	  WestMPV[jj]=mpv;
+	  WestError[jj]=error;
+	  jj++;    
 	}
       
       Int_t ii = 0;
       while (infileEast >> run >> mpv >> error)
 	{
-	  if (mpv<10. && mpv>0. && error <2.)
-	    {
-	      EastRun[ii]=run; 
-	      EastMPV[ii]=mpv;
-	      EastError[ii]=error;
+	  EastRun[ii]=run; 
+	  EastMPV[ii]=mpv;
+	  EastError[ii]=error;
 	      
-	      cout << ii << endl;
-	      ii++;
-	    }
+	  cout << ii << endl;
+	  ii++;
 	}
       infileWest.close();
       infileEast.close();
       
       char temp[100];
       TGraphErrors *East = new TGraphErrors(Eruns, EastRun, EastMPV, 0, EastError);
-      sprintf(temp, "East Side MPV: %s",t); 
+      sprintf(temp, "%s East Side MPV: %s",runtype, t); 
       East->SetTitle(temp);
       East->GetYaxis()->SetRangeUser(1., 3.5);
       East->GetYaxis()->SetTitle("Energy (keV)");
       East->GetXaxis()->SetTitle("Run Number");
       TGraphErrors *West = new TGraphErrors(Wruns, WestRun, WestMPV, 0, WestError);
-      sprintf(temp, "West Side MPV: %s",t);
+      sprintf(temp, "%s West Side MPV: %s",runtype, t);
       West->SetTitle(temp);
       West->GetYaxis()->SetRangeUser(1., 3.5);
       West->GetYaxis()->SetTitle("Energy (keV)");
@@ -108,37 +100,32 @@
       
       Char_t east[100], west[100];
       
-      sprintf(east, "East_mpvTrack_%s_%s.dat", geo, t);
-      sprintf(west, "West_mpvTrack_%s_%s.dat", geo, t);
+      sprintf(east, "East_mpvTrack_%s_%s_%s.dat", geo, t, runtype);
+      sprintf(west, "West_mpvTrack_%s_%s_%s.dat", geo, t, runtype);
       
-      infileEast.open(east);
       infileWest.open(west);
-      Double_t run, mpv, error;
+      infileEast.open(east);
       Int_t Wruns=0, Eruns=0;
+      Double_t run, mpv, error;
       while (infileWest >> run >> mpv >> error)
-	{
-	  if (mpv<10. && mpv>0. && error <2.)
-	    {
-	      Wruns++;
-	    }
+	{	    
+	  Wruns++;
 	}
       
       while (infileEast >> run >> mpv >> error)
-	{
-	  if (mpv<10. && mpv>0. && error <2.)
-	    {
-	      Eruns++;
-	    }
+	{	    
+	  Eruns++;
 	}
       infileEast.close();    
       infileWest.close();
-      Double_t EastRun[Eruns];
-      Double_t WestRun[Wruns];
-      Double_t EastMPV[Eruns];
-      Double_t WestMPV[Wruns];
-      Double_t EastError[Eruns];
-      Double_t WestError[Wruns];
-      
+
+      Double_t EastRunA[Eruns];
+      Double_t WestRunA[Wruns];
+      Double_t EastMPVA[Eruns];
+      Double_t WestMPVA[Wruns];
+      Double_t EastErrorA[Eruns];
+      Double_t WestErrorA[Wruns];
+
       infileWest.open(west);
       infileEast.open(east);
       
@@ -147,40 +134,34 @@
       Int_t jj=0;
       while (infileWest >> run >> mpv >> error)
 	{
-	  if (mpv<10. && mpv>0. && error <2.)
-	    {
-	      WestRun[jj]=run; 
-	      WestMPV[jj]=mpv;
-	      WestError[jj]=error;
-	      jj++;
-	    }
+	  WestRunA[jj]=run; 
+	  WestMPVA[jj]=mpv;
+	  WestErrorA[jj]=error;
+	  jj++;
 	}
       
       Int_t ii = 0;
       while (infileEast >> run >> mpv >> error)
 	{
-	  if (mpv<10. && mpv>0. && error <2.)
-	    {
-	      EastRun[ii]=run; 
-	      EastMPV[ii]=mpv;
-	      EastError[ii]=error;
-	      
-	      cout << ii << endl;
-	      ii++;
-	    }
+	  EastRunA[ii]=run; 
+	  EastMPVA[ii]=mpv;
+	  EastErrorA[ii]=error;
+	  
+	  cout << ii << endl;
+	  ii++;
 	}
       infileWest.close();
       infileEast.close();
       
       char temp[100];
-      TGraphErrors *East = new TGraphErrors(Eruns, EastRun, EastMPV, 0, EastError);
-      sprintf(temp, "East Side MPV: %s",t); 
+      TGraphErrors *East = new TGraphErrors(Eruns, EastRunA, EastMPVA, 0, EastErrorA);
+      sprintf(temp, "%s East Side MPV: %s",runtype, t); 
       East->SetTitle(temp);
       East->GetYaxis()->SetRangeUser(1., 3.5);
       East->GetYaxis()->SetTitle("Energy (keV)");
       East->GetXaxis()->SetTitle("Run Number");
-      TGraphErrors *West = new TGraphErrors(Wruns, WestRun, WestMPV, 0, WestError);
-      sprintf(temp, "West Side MPV: %s",t);
+      TGraphErrors *West = new TGraphErrors(Wruns, WestRunA, WestMPVA, 0, WestErrorA);
+      sprintf(temp, "%s West Side MPV: %s",runtype,t);
       West->SetTitle(temp);
       West->GetYaxis()->SetRangeUser(1., 3.5);
       West->GetYaxis()->SetTitle("Energy (keV)");

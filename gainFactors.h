@@ -22,7 +22,7 @@ using namespace std;
 class GAIN_FACTOR
 {
  public:
-  GAIN_FACTOR(Char_t* type, Char_t* file, Int_t nrings,Int_t emin, Int_t emax ); //loads runs in octet and opens output file
+  GAIN_FACTOR(Char_t* type, Char_t* file, Int_t nrings,Int_t emin, Int_t emax, Char_t* runtype ); //loads runs in octet and opens output file
   void loadEta(const GRID&); //loads the eta factors. 
   void calc_Q_MPV(GRID&); //Calculates the MPV of the signal depending on whether it is anode or cathode method
   void load_Q_MPV(GRID&); //Loads already calculated MPV of the signal depending on whether it is anode or cathode method
@@ -46,6 +46,7 @@ class GAIN_FACTOR
   ofstream outfile, outfile1;
   Int_t nrings;
   Char_t geometry[10];
+  Char_t runType[20];
   TH1F *east;
   TH1F *west;
   TF1 *f1, *f2;

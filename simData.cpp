@@ -4,6 +4,7 @@
 #include <cstdio>
 #include <vector>
 #include <cstdlib>
+#include <string>
 
 #include <TTree.h>
 #include <TBranch.h>
@@ -21,12 +22,12 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-  if (argc < 4)
+  if (argc < 6)
     {
-      cout << "Usage: ./simData [numfiles] [Elow] [Ehigh] [geometry]\n";
+      cout << "Usage: ./simData [numfiles] [Elow] [Ehigh] [geometry] [runType]\n";
       return -1;
     }
-
+  
   Char_t temp2[500];
   ofstream outfile0, outfile1;
   
@@ -34,7 +35,23 @@ int main(int argc, char *argv[])
   Int_t Emin = atoi(argv[2]);
   Int_t Emax = atoi(argv[3]);
   Char_t *geometry = argv[4];  
-
+  Char_t *type = argv[5];
+  string type_check = argv[5];
+  Int_t numOpts = 7;
+  string runTypes[] = {"Beta", "Bi207","Sn113","Ce139","Cd109","Cs137", "Xe"};
+  int i = 0;
+  cout << type_check << " " << type << endl;
+  while (type_check!=runTypes[i])
+    {
+      cout << type_check << " " << runTypes[i] << endl;
+      i++;
+      if (i==numOpts) 
+	{
+	  cout << "Enter valid simulation type\n";
+	  return -1;
+	}
+    }
+  cout << "The run type is: " << type_check << endl;
   //Int_t EnergyRange = 800;
   //Int_t nbins = EnergyRange/binWidthEnergy;
   Int_t nbins = 1; //this is just remnant for now.
@@ -42,8 +59,8 @@ int main(int argc, char *argv[])
   Char_t temp[200], temp1[100], file0[100], file1[100];
   Char_t *calDir = getenv("UCNA_CAL_DIR"); 
   Char_t *G4Dir = getenv("G4WORKDIR");
-  sprintf(file0, "%s/Sims/Beta_%i-%ikev_%s_east.dat", calDir, Emin, Emax, geometry);
-  sprintf(file1, "%s/Sims/Beta_%i-%ikev_%s_west.dat", calDir, Emin, Emax, geometry);
+  sprintf(file0, "%s/Sims/%s_%i-%ikev_%s_east.dat", calDir, type, Emin, Emax, geometry);
+  sprintf(file1, "%s/Sims/%s_%i-%ikev_%s_west.dat", calDir, type, Emin, Emax, geometry);
   cout << file0 << endl;
   outfile0.open(file0);
   outfile1.open(file1);
@@ -55,11 +72,19 @@ int main(int argc, char *argv[])
       
   for (Int_t file_number = 0; file_number<num_files; file_number++)
     {
-	  
-      sprintf(temp2, "%s/output/%sgeo_n1_1mil/analyzed_%i.root", G4Dir, geometry, file_number);
-      chain->Add(temp2);
+      if (type_check=="Xe")
+	{
+	  sprintf(temp2, "%s/SrcSims%s/%s135_3-2+/analyzed_%i.root", G4Dir, geometry,type, file_number);
+	  chain->Add(temp2);
+	  cout << temp2 << endl;
+	}
+      else
+	{ 
+	  sprintf(temp2, "%s/SrcSims%s/%s/analyzed_%i.root", G4Dir, geometry,type, file_number);
+	  chain->Add(temp2);
+	}
     }
-
+  
 
   TH1F *east = new TH1F("east", "East Side", 200, 0., 50.);
   TH1F *west = new TH1F("west", "West Side", 200, 0., 50.); 

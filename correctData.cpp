@@ -4,7 +4,7 @@
 using namespace std;
 
 
-ANALYZER::ANALYZER(Int_t nrings, Int_t run, Int_t XeBegin, Int_t XeEnd, Int_t emin, Int_t emax, Char_t* t) //done
+ANALYZER::ANALYZER(Int_t nrings, Int_t run, Int_t XeBegin, Int_t XeEnd, Int_t emin, Int_t emax, Char_t* t, Char_t* runtype) //done
 {
   XeFileBegin = XeBegin;
   XeFileEnd = XeEnd;
@@ -13,6 +13,7 @@ ANALYZER::ANALYZER(Int_t nrings, Int_t run, Int_t XeBegin, Int_t XeEnd, Int_t em
   numEnBins = 1;
   fileNum = run;
   type = t;
+  runType = runtype;
   ANALYZER::SetDirs();
   Char_t temp[300];
   sprintf(temp,"%s/correctedData/RunNum_%i_%irings_%i-%ikev_%s.root", CalDir,fileNum, nrings, Emin, Emax, type);
@@ -88,7 +89,7 @@ void ANALYZER::etaFill(const GRID& g) //done
   if (fileNum>20120) {sprintf(geometry,"2012-2013");}
   else {sprintf(geometry, "2011-2012");}
 
-  sprintf(temp, "%s/gainFactors/gain_%s_%s.txt",CalDir, type, geometry); 
+  sprintf(temp, "%s/gainFactors/gain_%s_%s_%s.txt",CalDir, type, geometry, runType); 
   Int_t run=0;
   Double_t gE, gW;
   ifstream gainsIn;
@@ -303,7 +304,7 @@ void ANALYZER::Fit_histo(const GRID& grid) //done
   
   ofstream ofileEast;
   Char_t temp[100];
-  sprintf(temp,"East_mpvTrack_%s_%s.dat", geo, type);
+  sprintf(temp,"East_mpvTrack_%s_%s_%s.dat", geo, type, runType);
   ofileEast.open(temp, ios::app);
   ofileEast << fileNum << " " << mpv << " " << f1->GetParError(1) << endl ;
   ofileEast.close();
@@ -322,7 +323,7 @@ void ANALYZER::Fit_histo(const GRID& grid) //done
   mpv = f2->GetParameter(1);
  
   ofstream ofileWest;
-  sprintf(temp,"West_mpvTrack_%s_%s.dat", geo, type);
+  sprintf(temp,"West_mpvTrack_%s_%s_%s.dat", geo, type, runType);
   ofileWest.open(temp, ios::app);
   ofileWest << fileNum << " " << mpv << " " << f2->GetParError(1) << endl ;
   ofileWest.close();
@@ -333,9 +334,9 @@ void ANALYZER::Fit_histo(const GRID& grid) //done
 int main(int argc, char *argv[])
 {
 
-  if (argc < 7)
+  if (argc < 9)
     {
-      cout << "Usage: ./correctData [Xe fileBegin] [Xe fileEnd] [numRings] [Emin] [Emax] [anode/cathode] [RunNumber]\n";
+      cout << "Usage: ./correctData [Xe fileBegin] [Xe fileEnd] [numRings] [Emin] [Emax] [anode/cathode] [RunNumber] [runType]\n";
       //I don't want this to take elow or ehigh anymore. Just the Enbin. 
       return -1;
     }
@@ -352,14 +353,15 @@ int main(int argc, char *argv[])
   Int_t XefileEnd = atoi(argv[2]);
   Int_t emin = atoi(argv[4]);
   Int_t emax = atoi(argv[5]);
-  Char_t* type = argv[6];
+  Char_t* type = argv[6]; //anode or cathode
   Int_t runNumber = atoi(argv[7]);
+  Char_t* runtype = argv[8]; //This is Beta, Xe, Sn113 etc...
 
   cout << "I got to GRID\n\n";
   GRID g(numRings);
   cout << "I made the GRID\n\n";
   //ANALYZER analyzer(argv[5], gridSize);
-  ANALYZER analyzer(numRings,runNumber, XefileBegin, XefileEnd, emin, emax, type);
+  ANALYZER analyzer(numRings,runNumber, XefileBegin, XefileEnd, emin, emax, type, runtype);
   
   analyzer.Create_hists(g);
   analyzer.etaFill(g);
