@@ -3,8 +3,9 @@
 import sys
 import os
 import numpy
-sys.path.append(os.environ["G4BINDIR"]+"../../Scripts")
-from ucnacore.EncalDB import *
+#sys.path.append(os.environ["G4BINDIR"]+"../../Scripts")
+#from ucnacore.EncalDB import *
+from EncalDB import *
 
 class WirechamberDBfill:
 
