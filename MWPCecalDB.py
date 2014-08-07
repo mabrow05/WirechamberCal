@@ -157,5 +157,5 @@ if __name__ == "__main__":
 
     conn = open_connection()
     db=WirechamberDBfill()
-    db.LoadMaps(conn,nrings,rmin,rmax,emin,emax)
+    db.LoadMap(conn,nrings,rmin,rmax,emin,emax)
 
