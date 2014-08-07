@@ -15,7 +15,7 @@ class WirechamberDBfill:
         if self.anORcath=="cathode":
             self.charge_meas="ccloud"
 
-        self.CalDir=sys.environ("UCNA_CAL_DIR")
+        self.CalDir=os.environ["UCNA_CAL_DIR"]
         
     def SetPriority(self, run, side):
         anodePreferredE=[18270,18275,18606,18916,19148,20679, 20803,22199] #list of runs where anode is preferred over ccloud
