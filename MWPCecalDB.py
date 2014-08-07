@@ -31,7 +31,7 @@ class WirechamberDBfill:
                     if run==anodePreferredW[i]:
                         self.priority=10
 
-        if self.charge_meas="ccloud":
+        if self.charge_meas=="ccloud":
             self.priority=10
             if side=="East":
                 for i in range(0,len(anodePreferredE),1):
