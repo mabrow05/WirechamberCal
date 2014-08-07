@@ -87,7 +87,7 @@ class WirechamberDBfill:
 
     def LoadMap(self, conn, nrings, rmin, rmax, emin, emax ):
         radius=50
-        descrip="%s %i %i"%(charge_meas, rmin, rmax)
+        descrip="%s %i %i"%(self.charge_meas, rmin, rmax)
         cmd="INSERT INTO posmap_set (descrip, n_rings, radius) "
         cmd+="VALUES ('%s',%i,%i)"%(descrip,nrings,radius)
         print cmd
