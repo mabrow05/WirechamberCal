@@ -6,8 +6,9 @@ import numpy
 sys.path.append(os.environ("G4BINDIR")+"../../Scripts")
 from ucnacore.EncalDB import *
 
-class WirechamberDBfill(anORcath="cathode"):
-    def __init__(self):
+class WirechamberDBfill:
+
+    def __init__(self, anORcath="cathode"):
         self.anORcath=anORcath
         self.priority=None
         self.charge_meas="anode"
