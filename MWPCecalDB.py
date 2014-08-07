@@ -26,7 +26,7 @@ class WirechamberDBfill:
                 for i in range(0,len(anodePreferredE),1):
                     if run==anodePreferredE[i]:
                         self.priority=10
-            else if side=="West":
+            elif side=="West":
                 for i in range(0,len(anodePreferredW),1):
                     if run==anodePreferredW[i]:
                         self.priority=10
@@ -37,7 +37,7 @@ class WirechamberDBfill:
                 for i in range(0,len(anodePreferredE),1):
                     if run==anodePreferredE[i]:
                         self.priority=0
-            else if side=="West":
+            elif side=="West":
                 for i in range(0,len(anodePreferredW),1):
                     if run==anodePreferredW[i]:
                         self.priority=0
