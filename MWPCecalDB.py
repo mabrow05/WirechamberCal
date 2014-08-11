@@ -90,7 +90,29 @@ class WirechamberDBfill:
         pmapIDcc = [243,244,245,246,247,248,249,250]
         pmapIDan = [251,252,253,254,255,256,257,258] 
         it=0
-    
+        pindex=None
+        if run>=16983 and run<=18055:
+            pindex=0
+        elif run>=18081 and run<=18386:
+            pindex=1
+        elif run>=18390 and run<=18683:
+            pindex=2
+        elif run>=18712 and run<=19239:
+            pindex=3
+        elif run>=19347 and run<=20000:
+            pindex=4
+        elif run>=20121 and run<=21605:
+            pindex=5
+        elif run>=21607 and run<=22238:
+            pindex=6
+        elif run>=22294 and run<=23173:
+            pindex=7
+
+        if c_meas=="anode":
+            return pmapIDan[pindex]
+        else:
+            return pmapIDcc[pindex]
+
         
 
     def LoadMap(self, conn, nrings, runmin, runmax, emin, emax ):
