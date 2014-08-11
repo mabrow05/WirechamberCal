@@ -87,7 +87,7 @@ class WirechamberDBfill:
 
     def LoadMap(self, conn, nrings, runmin, runmax, emin, emax ):
         radius=50
-        descrip="%s %i %i"%(self.charge_meas, rmin, rmax)
+        descrip="%s %i-%i"%(self.charge_meas, rmin, rmax)
         cmd="INSERT INTO posmap_set (descrip, n_rings, radius) "
         cmd+="VALUES ('%s',%i,%i)"%(descrip,nrings,radius)
         print cmd
@@ -131,8 +131,8 @@ class WirechamberDBfill:
                     mapval.append(m)
                     
                 else:
-                    r = (rmax-rmin)/2.
-                    phi = (phimax-phimin)/2.
+                    r = (rmax+rmin)/2.
+                    phi = (phimax+phimin)/2.
                     x = r*numpy.cos(phi)
                     y = r*numpy.sin(phi)
                     x0.append(x)
@@ -140,11 +140,11 @@ class WirechamberDBfill:
                     mapval.append(m)
 
             for i in range(0, len(pixelID), 1):
-                print pixelID[i], x0[i], y0[i], mapval[i]
+                #print pixelID[i], x0[i], y0[i], mapval[i]
                 
-                #cmd2="INSERT INTO posmap_points (posmap_set_id,side,quadrant,pixel_id,signal,center_x,center_y,norm) "
-                #cmd2+="VALUES (%i,'%s',0,%i,%f,%f,%f,1)"%(pmid,Side,pixelID[i],mapval[i],x0[i],y0[i])
-                #print cmd2
+                cmd2="INSERT INTO posmap_points (posmap_set_id,side,quadrant,pixel_id,signal,center_x,center_y,norm) "
+                cmd2+="VALUES (%i,'%s',0,%i,%f,%f,%f,1)"%(pmid,Side,pixelID[i],mapval[i],x0[i],y0[i])
+                print cmd2
                 #conn.execute(cmd2)
 
 if __name__ == "__main__":
