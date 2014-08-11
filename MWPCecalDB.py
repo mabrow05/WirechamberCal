@@ -75,13 +75,13 @@ class WirechamberDBfill:
             print "Deleting",nold,"previous entries."
             cmd = "DELETE FROM mwpc_ecal "+wh
             print cmd
-            conn.execute(cmd)
+            #conn.execute(cmd)
 
         #Upload new gain
         cmd = "INSERT INTO mwpc_ecal (start_run,end_run,priority,side,charge_meas,gain_posmap_id,gain_factor) "
         cmd += "VALUES (%i,%i,%i,'%s','%s',%i,%g)"%(run, run ,self.priority,side,self.charge_meas,pmid,gain)
         print cmd
-        conn.execute(cmd)
+        #conn.execute(cmd)
         print "Run %i loaded to database"%(run)
 
     def GetPosmapID(self, run, c_meas):
@@ -179,6 +179,11 @@ class WirechamberDBfill:
 
 if __name__ == "__main__":
 
+    if 1:
+        conn=open_connection()
+        db = WirechamberDBfill(anORcath="cathode")
+        db.LoadGainFromFile(conn, "2011-2012","Beta")
+
     XeRunBegin = [17570, 18081, 18390, 18712, 19873, 21596, 21966, 22961]
     XeRunEnd = [17610, 18090, 18413, 18744, 19898, 21605, 22003, 22979]
     nrings=6
@@ -196,9 +201,9 @@ if __name__ == "__main__":
 
             print "Finished Loading runs",rmin,"-",rmax
 
-    if 1:
+    if 0:
         for i in range(0,len(XeRunBegin),1):
             db=WirechamberDBfill()
-            pid=db.GetPosmapID(XeRunEnd[i],"ccloud")
+            pid=db.GetPosmapID(XeRunEnd[i],"anode")
             print pid
 
