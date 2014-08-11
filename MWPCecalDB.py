@@ -61,7 +61,7 @@ class WirechamberDBfill:
             
     #Function to upload gain to database for a single run on a single side
     def UploadGainToDB(self, conn, run, side, gain, priority=None):
-        pmid=0; #add in function which determines the map number, once I have added the maps...
+        pmid=GetPosmapID(run, self.charge_meas)
         if priority is None:
             self.SetPriority(run, side)
         else:
@@ -83,6 +83,22 @@ class WirechamberDBfill:
         print cmd
         conn.execute(cmd)
         print "Run %i loaded to database"%(run)
+
+    def GetPosmapID(self, run, c_meas):
+        XeRunBegin = [17570, 18081, 18390, 18712, 19873, 21596, 21966, 22961]
+        XeRunEnd = [17610, 18090, 18413, 18744, 19898, 21605, 22003, 22979]
+        pmapIDcc = [243,244,245,246,247,248,249,250]
+        pmapIDan = [251,252,253,254,255,256,257,258] 
+        it=0
+        for r in XeRunBegin:
+            if run<=r:
+                pindex=it
+            else:
+                it++
+        if c_meas=="anode":
+            return pmapIDan[it]
+        else:
+            return pmapIDcc[it]
         
 
     def LoadMap(self, conn, nrings, runmin, runmax, emin, emax ):
@@ -152,15 +168,21 @@ if __name__ == "__main__":
     XeRunBegin = [17570, 18081, 18390, 18712, 19873, 21596, 21966, 22961]
     XeRunEnd = [17610, 18090, 18413, 18744, 19898, 21605, 22003, 22979]
     nrings=6
-    for i in range(0, len(XeRunBegin),1):
-        rmin=XeRunBegin[i]
-        rmax=XeRunEnd[i]
-        emin=400
-        emax=600
+    if 0:
+        for i in range(0, len(XeRunBegin),1):
+            rmin=XeRunBegin[i]
+            rmax=XeRunEnd[i]
+            emin=400
+            emax=600
 
-        conn = open_connection()
-        db=WirechamberDBfill(anORcath="cathode")
-        db.LoadMap(conn,nrings,rmin,rmax,emin,emax)
+            conn = open_connection()
+            db=WirechamberDBfill(anORcath="cathode")
+            db.LoadMap(conn,nrings,rmin,rmax,emin,emax)
 
-        print "Finished Loading runs",rmin,"-",rmax
+            print "Finished Loading runs",rmin,"-",rmax
 
+    if 1:
+        for i in range(0,len(XeRunBegin),1):
+            db=WirechamberDBfill()
+            pid=db.GetPosmapID(XeRunEnd[i],"ccloud")
+            print pid
