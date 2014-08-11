@@ -159,7 +159,7 @@ if __name__ == "__main__":
         emax=600
 
         conn = open_connection()
-        db=WirechamberDBfill(anORcath="cathode")
+        db=WirechamberDBfill(anORcath="anode")
         db.LoadMap(conn,nrings,rmin,rmax,emin,emax)
 
         print "Finished Loading runs",rmin,"-",rmax
