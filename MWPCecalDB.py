@@ -168,6 +168,7 @@ if __name__ == "__main__":
     XeRunBegin = [17570, 18081, 18390, 18712, 19873, 21596, 21966, 22961]
     XeRunEnd = [17610, 18090, 18413, 18744, 19898, 21605, 22003, 22979]
     nrings=6
+
     if 0:
         for i in range(0, len(XeRunBegin),1):
             rmin=XeRunBegin[i]
@@ -186,3 +187,4 @@ if __name__ == "__main__":
             db=WirechamberDBfill()
             pid=db.GetPosmapID(XeRunEnd[i],"ccloud")
             print pid
+
