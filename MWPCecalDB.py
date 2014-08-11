@@ -149,13 +149,18 @@ class WirechamberDBfill:
 
 if __name__ == "__main__":
 
+    XeRunBegin = [17570, 18081, 18390, 18712, 19873, 21596, 21966, 22961]
+    XeRunEnd = [17610, 18090, 18413, 18744, 19898, 21605, 22003, 22979]
     nrings=6
-    rmin=18081
-    rmax=18090
-    emin=400
-    emax=600
+    for i in range(0, len(XeRunBegin),1):
+        rmin=XeRunBegin[i]
+        rmax=XeRunEnd[i]
+        emin=400
+        emax=600
 
-    conn = open_connection()
-    db=WirechamberDBfill()
-    db.LoadMap(conn,nrings,rmin,rmax,emin,emax)
+        conn = open_connection()
+        db=WirechamberDBfill()
+        db.LoadMap(conn,nrings,rmin,rmax,emin,emax)
+
+        print "Finished Loading runs",rmin,"-",rmax
 
