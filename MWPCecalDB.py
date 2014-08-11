@@ -90,15 +90,7 @@ class WirechamberDBfill:
         pmapIDcc = [243,244,245,246,247,248,249,250]
         pmapIDan = [251,252,253,254,255,256,257,258] 
         it=0
-        for r in XeRunBegin:
-            if run<=r:
-                pindex=it
-            else:
-                it++
-        if c_meas=="anode":
-            return pmapIDan[it]
-        else:
-            return pmapIDcc[it]
+    
         
 
     def LoadMap(self, conn, nrings, runmin, runmax, emin, emax ):
