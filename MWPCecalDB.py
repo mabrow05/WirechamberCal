@@ -87,7 +87,7 @@ class WirechamberDBfill:
 
     def LoadMap(self, conn, nrings, runmin, runmax, emin, emax ):
         radius=50
-        descrip="%s %i %i"%(self.charge_meas, rmin, rmax)
+        descrip="%s %i %i"%(self.charge_meas, runmin, runmax)
         cmd="INSERT INTO posmap_set (descrip, n_rings, radius) "
         cmd+="VALUES ('%s',%i,%i)"%(descrip,nrings,radius)
         print cmd
@@ -112,7 +112,7 @@ class WirechamberDBfill:
             phimax=None
             Side=None
 
-            fin="%irings_%i-%ikeV_posMap_%i-%i_%s_%s.dat"%(nrings, emin, emax, runmin, runmax,self.anORcath, side) 
+            fin=self.CalDir+"/posMaps/%irings_%i-%ikeV_posMap_%i-%i_%s_%s.dat"%(nrings, emin, emax, runmin, runmax,self.anORcath, side) 
             infile = open(fin, "r")
             pid=0
             for line in infile:
@@ -131,8 +131,8 @@ class WirechamberDBfill:
                     mapval.append(m)
                     
                 else:
-                    r = (rmax-rmin)/2.
-                    phi = (phimax-phimin)/2.
+                    r = (rmax+rmin)/2.
+                    phi = (phimax+phimin)/2.
                     x = r*numpy.cos(phi)
                     y = r*numpy.sin(phi)
                     x0.append(x)
