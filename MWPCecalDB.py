@@ -87,13 +87,14 @@ class WirechamberDBfill:
 
     def LoadMap(self, conn, nrings, runmin, runmax, emin, emax ):
         radius=50
-        descrip="%s %i %i"%(self.charge_meas, runmin, runmax)
+        descrip="%s %i-%i"%(self.charge_meas, runmin, runmax)
         cmd="INSERT INTO posmap_set (descrip, n_rings, radius) "
         cmd+="VALUES ('%s',%i,%i)"%(descrip,nrings,radius)
         print cmd
         #conn.execute(cmd)
         #conn.execute("SELECT LAST_INSERT_ID()")
         #pmid=int(conn.fetchone()[0])
+        pmid=10000
 
         
         for side in ["east", "west"]:
@@ -110,7 +111,6 @@ class WirechamberDBfill:
             rmax=None
             phimin=None
             phimax=None
-            Side=None
 
             fin=self.CalDir+"/posMaps/%irings_%i-%ikeV_posMap_%i-%i_%s_%s.dat"%(nrings, emin, emax, runmin, runmax,self.anORcath, side) 
             infile = open(fin, "r")
@@ -140,11 +140,11 @@ class WirechamberDBfill:
                     mapval.append(m)
 
             for i in range(0, len(pixelID), 1):
-                print pixelID[i], x0[i], y0[i], mapval[i]
+                #print pixelID[i], x0[i], y0[i], mapval[i]
                 
-                #cmd2="INSERT INTO posmap_points (posmap_set_id,side,quadrant,pixel_id,signal,center_x,center_y,norm) "
-                #cmd2+="VALUES (%i,'%s',0,%i,%f,%f,%f,1)"%(pmid,Side,pixelID[i],mapval[i],x0[i],y0[i])
-                #print cmd2
+                cmd2="INSERT INTO posmap_points (posmap_set_id,side,quadrant,pixel_id,signal,center_x,center_y,norm) "
+                cmd2+="VALUES (%i,'%s',0,%i,%f,%f,%f,1)"%(pmid,Side,pixelID[i],mapval[i],x0[i],y0[i])
+                print cmd2
                 #conn.execute(cmd2)
 
 if __name__ == "__main__":
