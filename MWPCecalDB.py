@@ -52,16 +52,16 @@ class WirechamberDBfill:
         for line in gainFile:
             nums = line.split()
             self.runs.append(int(nums[0]))
-            self.gainE[int(nums[0])]=int(nums[1])
-            self.gainW[int(nums[0])]=int(nums[2])
+            self.gainE[int(nums[0])]=float(nums[1])
+            self.gainW[int(nums[0])]=float(nums[2])
         gainFile.close()
-        for run in runs:
+        for run in self.runs:
             self.UploadGainToDB(conn, run, "East", self.gainE[run])
             self.UploadGainToDB(conn, run, "West", self.gainW[run])
             
     #Function to upload gain to database for a single run on a single side
     def UploadGainToDB(self, conn, run, side, gain, priority=None):
-        pmid=GetPosmapID(run, self.charge_meas)
+        pmid=self.GetPosmapID(run, self.charge_meas)
         if priority is None:
             self.SetPriority(run, side)
         else:
@@ -75,13 +75,13 @@ class WirechamberDBfill:
             print "Deleting",nold,"previous entries."
             cmd = "DELETE FROM mwpc_ecal "+wh
             print cmd
-            #conn.execute(cmd)
+            conn.execute(cmd)
 
         #Upload new gain
         cmd = "INSERT INTO mwpc_ecal (start_run,end_run,priority,side,charge_meas,gain_posmap_id,gain_factor) "
         cmd += "VALUES (%i,%i,%i,'%s','%s',%i,%g)"%(run, run ,self.priority,side,self.charge_meas,pmid,gain)
         print cmd
-        #conn.execute(cmd)
+        conn.execute(cmd)
         print "Run %i loaded to database"%(run)
 
     def GetPosmapID(self, run, c_meas):
@@ -181,7 +181,7 @@ if __name__ == "__main__":
 
     if 1:
         conn=open_connection()
-        db = WirechamberDBfill(anORcath="cathode")
+        db = WirechamberDBfill(anORcath="anode")
         db.LoadGainFromFile(conn, "2011-2012","Beta")
 
     XeRunBegin = [17570, 18081, 18390, 18712, 19873, 21596, 21966, 22961]
